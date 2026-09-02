@@ -1,23 +1,25 @@
 const { GoogleGenAI, Type } = require('@google/genai');
 const { loadSettings, resolveSystemPrompt } = require('./settings');
+const { resolveApiKey } = require('./api-keys');
+const { detectInputMode } = require('./translate-mode');
 
-const PER_MODEL_TIMEOUT_MS = 10000;
+const WORD_TIMEOUT_MS = 10000;
+const PHRASE_TIMEOUT_MS = 25000;
 
-const TRANSLATION_SCHEMA = {
+const WORD_SCHEMA = {
   type: Type.OBJECT,
   properties: {
     translation: {
       type: Type.STRING,
-      description: 'The translated text.',
+      description: 'The translated text or definition in the target language.',
     },
     source_text: {
       type: Type.STRING,
-      description:
-        'The original text exactly as captured from the screenshot or selection (source language).',
+      description: 'The original single word exactly as captured.',
     },
     example_sentence: {
       type: Type.STRING,
-      description: 'An example sentence using the source word or phrase in context (in the source language).',
+      description: 'A natural example sentence using the word in context (source language).',
     },
     example_translation: {
       type: Type.STRING,
@@ -30,21 +32,19 @@ const TRANSLATION_SCHEMA = {
     usage_in_context: {
       type: Type.STRING,
       description:
-        '2–4 sentences in the target language explaining how this word/phrase is used in the specific captured screenshot or selected text. Reference the actual surrounding context, domain, register, tone, and why this translation fits that exact situation.',
+        '2–4 sentences in the target language explaining how this word is used in the specific context.',
     },
     part_of_speech: {
       type: Type.STRING,
-      description: 'Part of speech abbreviation, e.g. n., v., adj., adv.',
+      description: 'Part of speech abbreviation, e.g. n., v., adj.',
     },
     phonetic_ipa: {
       type: Type.STRING,
-      description:
-        'IPA phonetic transcription for a single English headword, e.g. /ˈælɡəɹɪðəm/. Empty string if not a single English word.',
+      description: 'IPA for English headwords, e.g. /ˈælɡəɹɪðəm/. Empty if not English.',
     },
     base_word: {
       type: Type.STRING,
-      description:
-        'The primary English dictionary headword for lookup (lowercase, no punctuation).',
+      description: 'English dictionary headword (lowercase).',
     },
   },
   required: [
@@ -58,9 +58,64 @@ const TRANSLATION_SCHEMA = {
     'part_of_speech',
     'phonetic_ipa',
   ],
-  propertyOrdering: [
-    'translation',
+};
+
+const PHRASE_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    source_text: {
+      type: Type.STRING,
+      description:
+        'The complete original text exactly as provided or visible in the image. Preserve paragraph breaks.',
+    },
+    translation: {
+      type: Type.STRING,
+      description:
+        'The complete translation into the target language. Translate every sentence; preserve paragraph breaks and list structure. Do not summarize.',
+    },
+    source_language: {
+      type: Type.STRING,
+      description:
+        'BCP-47 language code of the source text, e.g. en, zh, ja. Best guess from the content.',
+    },
+  },
+  required: ['source_text', 'translation', 'source_language'],
+};
+
+const SCREENSHOT_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    mode: {
+      type: Type.STRING,
+      description:
+        'Set to "word" if the primary text is exactly one dictionary word. Set to "phrase" for sentences, clauses, or paragraphs.',
+    },
+    source_text: {
+      type: Type.STRING,
+      description: 'All primary text visible in the image that should be translated.',
+    },
+    translation: {
+      type: Type.STRING,
+      description:
+        'For mode=phrase: complete translation of ALL source_text. For mode=word: the word translation/definition.',
+    },
+    source_language: {
+      type: Type.STRING,
+      description: 'BCP-47 code of source_text, e.g. en, zh.',
+    },
+    example_sentence: { type: Type.STRING, description: 'Word mode only; empty string for phrase mode.' },
+    example_translation: { type: Type.STRING, description: 'Word mode only; empty string for phrase mode.' },
+    context_explanation: { type: Type.STRING, description: 'Word mode only; empty string for phrase mode.' },
+    usage_in_context: { type: Type.STRING, description: 'Word mode only; empty string for phrase mode.' },
+    part_of_speech: { type: Type.STRING, description: 'Word mode only; empty string for phrase mode.' },
+    phonetic_ipa: { type: Type.STRING, description: 'Word mode only; empty string for phrase mode.' },
+    base_word: { type: Type.STRING, description: 'Word mode only; empty string for phrase mode.' },
+  },
+  required: [
+    'mode',
     'source_text',
+    'translation',
+    'source_language',
     'example_sentence',
     'example_translation',
     'context_explanation',
@@ -70,6 +125,38 @@ const TRANSLATION_SCHEMA = {
     'base_word',
   ],
 };
+
+function resolvePhraseSystemPrompt(settings) {
+  const language = settings.targetLanguage || 'English';
+  return `You are an expert professional translator.
+
+Translate the ENTIRE source text into ${language}.
+
+Rules:
+- Translate ALL content completely. Never translate only keywords or give a summary.
+- Preserve meaning, tone, register, names, numbers, and formatting intent.
+- Preserve paragraph breaks, line breaks, and bullet/list structure from the source.
+- Do not add explanations, notes, or extra commentary outside the translation.
+- source_text must match the original input exactly (fix obvious OCR errors only if needed).
+- translation must contain ONLY the translated text in ${language}.`;
+}
+
+function resolveScreenshotSystemPrompt(settings) {
+  const language = settings.targetLanguage || 'English';
+  return `You analyze screenshots and extract text for translation into ${language}.
+
+Step 1 — Extract the primary text block the user most likely wants translated (ignore UI chrome, watermarks, and unrelated background text when possible).
+
+Step 2 — Decide mode:
+- mode=word ONLY if the primary text is exactly ONE dictionary word (no spaces, not a sentence).
+- mode=phrase for ANY sentence, clause, paragraph, or multiple words.
+
+Step 3 — Respond:
+- phrase mode: translation must be a COMPLETE faithful translation of ALL of source_text. Leave example_sentence, example_translation, context_explanation, usage_in_context, part_of_speech, phonetic_ipa, and base_word as empty strings.
+- word mode: fill all dictionary/tutor fields. translation is the ${language} equivalent or definition.
+
+Never summarize. Never translate only part of the text when mode=phrase.`;
+}
 
 function withTimeout(promise, ms, message) {
   return Promise.race([
@@ -85,13 +172,14 @@ function getModelChain(settings) {
   return [...new Set(chain)];
 }
 
-function formatResult(parsed, modelUsed, extra = {}) {
+function formatWordResult(parsed, modelUsed, extra = {}) {
   const baseWord = String(parsed.base_word || '')
     .trim()
     .toLowerCase()
     .replace(/\s+/g, '-');
 
   return {
+    layoutMode: 'word',
     translation: parsed.translation ?? '',
     source_text: parsed.source_text ?? '',
     example_sentence: parsed.example_sentence ?? '',
@@ -101,10 +189,45 @@ function formatResult(parsed, modelUsed, extra = {}) {
     part_of_speech: parsed.part_of_speech ?? '',
     phonetic_ipa: parsed.phonetic_ipa ?? '',
     base_word: parsed.base_word ?? '',
+    source_language: parsed.source_language || 'en',
     dictionaryUrl: `https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(baseWord)}`,
     modelUsed,
     ...extra,
   };
+}
+
+function formatPhraseResult(parsed, modelUsed, extra = {}) {
+  const source = String(parsed.source_text || extra.source_text || extra.sourceText || '').trim();
+  const translation = String(parsed.translation || '').trim();
+
+  return {
+    layoutMode: 'phrase',
+    mode: 'phrase',
+    source_text: source,
+    sourceText: source,
+    sourceDisplay: source,
+    translation,
+    source_language: parsed.source_language || 'en',
+    example_sentence: '',
+    example_translation: '',
+    context_explanation: '',
+    usage_in_context: '',
+    part_of_speech: '',
+    phonetic_ipa: '',
+    base_word: '',
+    modelUsed,
+    ...extra,
+  };
+}
+
+function formatScreenshotResult(parsed, modelUsed) {
+  const mode = parsed.mode === 'word' ? 'word' : 'phrase';
+
+  if (mode === 'phrase') {
+    return formatPhraseResult(parsed, modelUsed);
+  }
+
+  return formatWordResult(parsed, modelUsed, { mode: 'word' });
 }
 
 function shortenError(err) {
@@ -118,7 +241,15 @@ function shortenError(err) {
   }
 }
 
-async function generateWithFallback(ai, settings, systemPrompt, contents, onProgress) {
+async function generateWithFallback(
+  ai,
+  settings,
+  systemPrompt,
+  contents,
+  schema,
+  onProgress,
+  timeoutMs = WORD_TIMEOUT_MS
+) {
   const modelsToTry = getModelChain(settings);
   if (modelsToTry.length === 0) {
     throw new Error('No models configured. Open Settings and select a primary model.');
@@ -144,11 +275,11 @@ async function generateWithFallback(ai, settings, systemPrompt, contents, onProg
           config: {
             systemInstruction: systemPrompt,
             responseMimeType: 'application/json',
-            responseJsonSchema: TRANSLATION_SCHEMA,
+            responseJsonSchema: schema,
           },
         }),
-        PER_MODEL_TIMEOUT_MS,
-        `Timed out after ${PER_MODEL_TIMEOUT_MS / 1000}s`
+        timeoutMs,
+        `Timed out after ${timeoutMs / 1000}s`
       );
 
       const text = response.text;
@@ -172,24 +303,25 @@ async function generateWithFallback(ai, settings, systemPrompt, contents, onProg
 }
 
 async function translateScreenshot(imageBuffer, onProgress) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const settings = loadSettings();
+  const apiKey = resolveApiKey(settings);
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not set. Copy .env.example to .env and add your key.');
+    throw new Error('No Gemini API key configured. Open Settings → API Keys to add one.');
   }
 
-  const settings = loadSettings();
-  const systemPrompt = resolveSystemPrompt(settings);
   const ai = new GoogleGenAI({ apiKey });
 
   const { parsed, model } = await generateWithFallback(
     ai,
     settings,
-    systemPrompt,
+    resolveScreenshotSystemPrompt(settings),
     [
       {
         role: 'user',
         parts: [
-          { text: 'Analyze the screenshot and return the structured translation. For usage_in_context, explain how the text is used specifically within what you see on screen.' },
+          {
+            text: 'Extract the primary text from this screenshot and return structured JSON. Use mode=phrase for any sentence or paragraph; translate ALL extracted text completely.',
+          },
           {
             inlineData: {
               mimeType: 'image/png',
@@ -199,42 +331,83 @@ async function translateScreenshot(imageBuffer, onProgress) {
         ],
       },
     ],
-    onProgress
+    SCREENSHOT_SCHEMA,
+    onProgress,
+    PHRASE_TIMEOUT_MS
   );
 
-  return formatResult(parsed, model);
+  return formatScreenshotResult(parsed, model);
 }
 
 async function translateText(text, onProgress) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const settings = loadSettings();
+  const apiKey = resolveApiKey(settings);
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not set. Copy .env.example to .env and add your key.');
+    throw new Error('No Gemini API key configured. Open Settings → API Keys to add one.');
   }
 
-  const settings = loadSettings();
-  const systemPrompt = resolveSystemPrompt(settings);
+  const trimmed = String(text || '').trim();
+  if (!trimmed) {
+    throw new Error('No text selected.');
+  }
+
+  const mode = detectInputMode(trimmed);
   const ai = new GoogleGenAI({ apiKey });
 
-  onProgress?.('Reading selection...');
+  onProgress?.(mode === 'phrase' ? 'Translating text...' : 'Translating word...');
+
+  if (mode === 'phrase') {
+    const { parsed, model } = await generateWithFallback(
+      ai,
+      settings,
+      resolvePhraseSystemPrompt(settings),
+      [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: `Translate the following text completely into the target language. Preserve all paragraph breaks.\n\n${trimmed}`,
+            },
+          ],
+        },
+      ],
+      PHRASE_SCHEMA,
+      onProgress,
+      PHRASE_TIMEOUT_MS
+    );
+
+    return formatPhraseResult(parsed, model, {
+      sourceText: trimmed,
+      source_text: parsed.source_text?.trim() || trimmed,
+    });
+  }
 
   const { parsed, model } = await generateWithFallback(
     ai,
     settings,
-    systemPrompt,
+    resolveSystemPrompt(settings),
     [
       {
         role: 'user',
         parts: [
           {
-            text: `Translate the following selected text and return structured JSON. For usage_in_context, explain how the word/phrase is used specifically within this selection and its immediate context:\n\n${text}`,
+            text: `This is a single word lookup. Return dictionary-style JSON for:\n\n${trimmed}`,
           },
         ],
       },
     ],
-    onProgress
+    WORD_SCHEMA,
+    onProgress,
+    WORD_TIMEOUT_MS
   );
 
-    return formatResult(parsed, model, { sourceText: text, source_text: text });
+  return formatWordResult(parsed, model, { sourceText: trimmed, source_text: trimmed });
 }
 
-module.exports = { translateScreenshot, translateText };
+module.exports = {
+  translateScreenshot,
+  translateText,
+  detectInputMode,
+  WORD_TIMEOUT_MS,
+  PHRASE_TIMEOUT_MS,
+};

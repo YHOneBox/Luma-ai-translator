@@ -7,7 +7,10 @@
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "vite build",
     "start": "npm run build && electron .",
-    "pack": "npm run build && electron-builder --dir"
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "dist:portable": "npm run build && electron-builder --win portable",
+    "dist:win": "npm run build && electron-builder --win portable zip"
   },
   "author": "",
   "license": "MIT",
@@ -37,15 +40,26 @@
     "directories": {
       "output": "release"
     },
+    "artifactName": "AI-Translate-${version}-${os}-${arch}.${ext}",
     "win": {
       "icon": "assets/logo.png",
-      "target": "nsis"
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "AI-Translate-${version}-Portable.exe"
     },
     "mac": {
-      "icon": "assets/logo.png"
+      "icon": "assets/logo.png",
+      "target": ["dmg", "zip"]
     },
     "linux": {
-      "icon": "assets/logo.png"
+      "icon": "assets/logo.png",
+      "target": ["AppImage", "zip"]
     }
   }
 }

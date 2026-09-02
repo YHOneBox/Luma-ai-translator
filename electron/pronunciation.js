@@ -65,19 +65,7 @@ function normalizeIpa(ipa) {
   return inner ? `/${inner}/` : '';
 }
 
-function isSingleEnglishWord(text) {
-  const word = String(text || '').trim();
-  if (!word || /\s/.test(word)) return false;
-  return /^[a-zA-Z'-]+$/.test(word);
-}
-
-function cleanLookupWord(word) {
-  return String(word || '')
-    .trim()
-    .toLowerCase()
-    .replace(/['']s$/i, '')
-    .replace(/^[^a-z]+|[^a-z'-]+$/g, '');
-}
+const { isSingleEnglishWord } = require('./translate-mode');
 
 function pickPhoneticAndAudio(phonetics, entryPhonetic) {
   let phonetic = entryPhonetic || '';
@@ -169,9 +157,16 @@ async function fetchAudioDataUrl(sourceUrl) {
 }
 
 async function fetchGoogleTtsDataUrl(text, lang = 'en') {
-  const snippet = String(text || '').trim().slice(0, 200);
+  const snippet = String(text || '').trim().slice(0, 480);
   if (!snippet) return null;
   return fetchAudioDataUrl(getGoogleTtsUrl(snippet, lang));
+}
+
+function normalizeTtsLang(code) {
+  const raw = String(code || 'en').trim().toLowerCase();
+  if (!raw) return 'en';
+  if (raw.includes('-')) return raw.split('-')[0];
+  return raw;
 }
 
 const TTS_LANG_MAP = {
@@ -198,16 +193,12 @@ function getTtsLangCode(languageName) {
   return TTS_LANG_MAP[key] || 'en';
 }
 
-function getSourceText(result) {
-  return String(result.sourceText || result.source_text || '').trim();
-}
-
-function resolveLayoutMode(result) {
-  const source = getSourceText(result);
-  if (source) {
-    return source.split(/\s+/).filter(Boolean).length > 1 ? 'phrase' : 'word';
-  }
-  return result.isSingleWord !== false && resolveLookupWord(result) ? 'word' : 'phrase';
+function cleanLookupWord(word) {
+  return String(word || '')
+    .trim()
+    .toLowerCase()
+    .replace(/['']s$/i, '')
+    .replace(/^[^a-z]+|[^a-z'-]+$/g, '');
 }
 
 function resolveLookupWord(result) {
@@ -290,12 +281,14 @@ async function enrichWithPronunciation(result) {
 }
 
 async function enrichPhraseResult(result, targetLanguage = 'English') {
+  const { getSourceText } = require('./translate-mode');
   const source = getSourceText(result);
   const translation = String(result.translation || '').trim();
   const targetLang = getTtsLangCode(targetLanguage);
+  const sourceLang = normalizeTtsLang(result.source_language || 'en');
 
   const [sourceAudioDataUrl, translationAudioDataUrl] = await Promise.all([
-    source ? fetchGoogleTtsDataUrl(source, 'en') : null,
+    source ? fetchGoogleTtsDataUrl(source, sourceLang) : null,
     translation ? fetchGoogleTtsDataUrl(translation, targetLang) : null,
   ]);
 
@@ -312,9 +305,6 @@ async function enrichPhraseResult(result, targetLanguage = 'English') {
 module.exports = {
   enrichWithPronunciation,
   enrichPhraseResult,
-  isSingleEnglishWord,
   resolveLookupWord,
-  resolveLayoutMode,
-  getSourceText,
   normalizeIpa,
 };

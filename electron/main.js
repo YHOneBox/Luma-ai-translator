@@ -1,6 +1,10 @@
 require('dotenv').config();
 
 const path = require('path');
+
+// Allow optional .env next to the portable .exe (in addition to project-root .env in dev)
+require('dotenv').config({ path: path.join(path.dirname(process.execPath), '.env') });
+
 const {
   app,
   BrowserWindow,
@@ -18,12 +22,21 @@ const { getSelectedText } = require('./selection');
 const {
   loadSettings,
   saveSettings,
+  saveApiKeyState,
   getDefaultSettings,
   resetSettings,
+  getPublicSettings,
 } = require('./settings');
+const {
+  addApiKey,
+  removeApiKey,
+  setActiveApiKey,
+  updateApiKeyLabel,
+} = require('./api-keys');
 const { scanAvailableModels } = require('./models');
 const { validateHotkeys } = require('./hotkey-utils');
-const { enrichWithPronunciation, enrichPhraseResult, resolveLookupWord, resolveLayoutMode } = require('./pronunciation');
+const { enrichWithPronunciation, enrichPhraseResult, resolveLookupWord } = require('./pronunciation');
+const { resolveLayoutMode } = require('./translate-mode');
 const { recordHotkey } = require('./hotkey-recorder');
 
 const isDev = !app.isPackaged;
@@ -355,18 +368,46 @@ function setupIpc() {
     }
   });
 
-  ipcMain.handle('settings:get', () => loadSettings());
+  ipcMain.handle('settings:get', () => getPublicSettings());
   ipcMain.handle('settings:getDefaults', () => getDefaultSettings());
   ipcMain.handle('settings:save', (_event, updates) => {
     validateHotkeys({ ...loadSettings(), ...updates });
-    const saved = saveSettings(updates);
+    saveSettings(updates);
     registerHotkeys();
-    return saved;
+    return getPublicSettings();
   });
   ipcMain.handle('settings:reset', () => {
-    const reset = resetSettings();
+    resetSettings();
     registerHotkeys();
-    return reset;
+    return getPublicSettings();
+  });
+
+  ipcMain.handle('apiKeys:add', (_event, payload) => {
+    const current = loadSettings();
+    const next = addApiKey(current, payload);
+    saveApiKeyState(next);
+    return getPublicSettings();
+  });
+
+  ipcMain.handle('apiKeys:remove', (_event, id) => {
+    const current = loadSettings();
+    const next = removeApiKey(current, id);
+    saveApiKeyState(next);
+    return getPublicSettings();
+  });
+
+  ipcMain.handle('apiKeys:setActive', (_event, id) => {
+    const current = loadSettings();
+    const next = setActiveApiKey(current, id);
+    saveApiKeyState(next);
+    return getPublicSettings();
+  });
+
+  ipcMain.handle('apiKeys:updateLabel', (_event, { id, label }) => {
+    const current = loadSettings();
+    const next = updateApiKeyLabel(current, id, label);
+    saveApiKeyState(next);
+    return getPublicSettings();
   });
   ipcMain.handle('models:scan', async () => {
     try {

@@ -9,6 +9,9 @@ export default function Settings({ onBack }) {
   const [scanning, setScanning] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState('');
+  const [newKeyLabel, setNewKeyLabel] = useState('');
+  const [newKeyValue, setNewKeyValue] = useState('');
+  const [addingKey, setAddingKey] = useState(false);
 
   const load = useCallback(async () => {
     const api = window.electronAPI;
@@ -143,6 +146,52 @@ export default function Settings({ onBack }) {
     }
   };
 
+  const addApiKey = async () => {
+    if (!newKeyValue.trim()) {
+      setStatus('Enter an API key before adding.');
+      return;
+    }
+
+    setAddingKey(true);
+    setStatus('');
+    try {
+      const saved = await window.electronAPI.addApiKey({
+        label: newKeyLabel.trim() || 'API Key',
+        key: newKeyValue.trim(),
+      });
+      setSettings(saved);
+      setNewKeyLabel('');
+      setNewKeyValue('');
+      setStatus('API key added.');
+    } catch (err) {
+      setStatus(err.message || 'Failed to add API key.');
+    } finally {
+      setAddingKey(false);
+    }
+  };
+
+  const activateApiKey = async (id) => {
+    setStatus('');
+    try {
+      const saved = await window.electronAPI.setActiveApiKey(id);
+      setSettings(saved);
+      setStatus('Active API key updated.');
+    } catch (err) {
+      setStatus(err.message || 'Failed to set active API key.');
+    }
+  };
+
+  const deleteApiKey = async (id) => {
+    setStatus('');
+    try {
+      const saved = await window.electronAPI.removeApiKey(id);
+      setSettings(saved);
+      setStatus('API key removed.');
+    } catch (err) {
+      setStatus(err.message || 'Failed to remove API key.');
+    }
+  };
+
   if (!settings) {
     return (
       <div className="settings-page">
@@ -172,6 +221,91 @@ export default function Settings({ onBack }) {
       </header>
 
       <div className="settings-body">
+        <section className="settings-section">
+          <h2>API Keys</h2>
+          <small className="settings-section-hint">
+            Add your Gemini API key here. Keys are stored locally on this device and never
+            uploaded to GitHub. Get a key from{' '}
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                window.electronAPI?.openDictionary('https://aistudio.google.com/apikey');
+              }}
+            >
+              Google AI Studio
+            </a>
+            .
+          </small>
+
+          {settings.hasEnvApiKey && (settings.apiKeys?.length ?? 0) === 0 && (
+            <p className="settings-note api-key-env-note">
+              A key was found in your local <code>.env</code> file and will be used until you
+              add a key below.
+            </p>
+          )}
+
+          {(settings.apiKeys?.length ?? 0) > 0 ? (
+            <ul className="api-key-list">
+              {settings.apiKeys.map((entry) => (
+                <li key={entry.id} className={entry.isActive ? 'active' : ''}>
+                  <label className="api-key-radio">
+                    <input
+                      type="radio"
+                      name="activeApiKey"
+                      checked={entry.isActive}
+                      onChange={() => activateApiKey(entry.id)}
+                    />
+                    <span className="api-key-meta">
+                      <strong>{entry.label}</strong>
+                      <span className="api-key-mask">{entry.maskedKey}</span>
+                    </span>
+                  </label>
+                  <button
+                    type="button"
+                    className="btn-secondary small api-key-delete"
+                    onClick={() => deleteApiKey(entry.id)}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="settings-note">No saved API keys yet.</p>
+          )}
+
+          <div className="api-key-add">
+            <label className="field">
+              <span>Label (optional)</span>
+              <input
+                type="text"
+                value={newKeyLabel}
+                onChange={(e) => setNewKeyLabel(e.target.value)}
+                placeholder="Personal / Work"
+              />
+            </label>
+            <label className="field">
+              <span>Gemini API key</span>
+              <input
+                type="password"
+                value={newKeyValue}
+                onChange={(e) => setNewKeyValue(e.target.value)}
+                placeholder="AIza..."
+                autoComplete="off"
+              />
+            </label>
+            <button
+              type="button"
+              className="btn-secondary small"
+              onClick={addApiKey}
+              disabled={addingKey}
+            >
+              {addingKey ? 'Adding...' : 'Add API Key'}
+            </button>
+          </div>
+        </section>
+
         <section className="settings-section">
           <h2>Basic</h2>
 

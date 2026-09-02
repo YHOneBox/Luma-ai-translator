@@ -20,6 +20,8 @@ A desktop translation app built with **Electron + React**. It runs in the backgr
 - [Settings](#settings)
 - [Hotkeys](#hotkeys)
 - [Setup](#setup)
+- [Download & Run (Portable)](#download--run-portable)
+- [Releasing on GitHub](#releasing-on-github)
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
 - [Gemini Output Schema](#gemini-output-schema)
@@ -281,6 +283,7 @@ Open **Settings** from the gear icon on the main window.
 
 | Setting | Description |
 |---------|-------------|
+| **API Keys** | Add, remove, and switch between Gemini API keys (stored locally) |
 | **Target language** | Language Gemini translates into (default: English) |
 | **Primary model** | First Gemini model to try |
 | **Fallback models** | Ordered list of backup models; use **Scan models** to discover available models for your API key |
@@ -296,6 +299,28 @@ Settings are saved to:
 ```
 
 **Hotkey recording:** Click **Set key** in Settings, then press your desired key combination. Press `Esc` to cancel. Each hotkey must include at least one modifier (`Ctrl`, `Alt`, or `Shift`) and must be unique across all three actions.
+
+### API Keys
+
+Open **Settings → API Keys** to manage your Gemini keys in the app.
+
+| Action | How |
+|--------|-----|
+| **Add a key** | Enter an optional label + API key → **Add API Key** |
+| **Switch active key** | Select the radio button next to the key you want to use |
+| **Remove a key** | Click **Remove** on that entry |
+
+**Priority order** the app uses to find a key:
+
+1. **Active saved key** in Settings (recommended for daily use)
+2. **First saved key** if no active key is set
+3. **`.env` file** (`GEMINI_API_KEY=...`) as a developer fallback
+
+Keys are saved in your local settings file (`settings.json` under the app user data folder). They are **masked in the UI** (only the first/last few characters are shown) and are **never committed to Git** if you follow the release steps below.
+
+Get a free key from [Google AI Studio](https://aistudio.google.com/apikey).
+
+> **Security:** Do not commit `.env`, `settings.json`, or screenshots of your API keys to GitHub.
 
 ---
 
@@ -320,7 +345,16 @@ All hotkeys can be changed in **Settings**.
 npm install
 ```
 
-### 2. Set your Gemini API key
+### 2. Add your Gemini API key
+
+**Option A — In the app (recommended)**
+
+1. Run the app (`npm run dev`).
+2. Open **Settings** (gear icon) → **API Keys**.
+3. Paste your key from [Google AI Studio](https://aistudio.google.com/apikey).
+4. Click **Add API Key**.
+
+**Option B — `.env` file (developers)**
 
 ```bash
 copy .env.example .env
@@ -332,29 +366,190 @@ Edit `.env`:
 GEMINI_API_KEY=your_actual_api_key_here
 ```
 
-Get a key from [Google AI Studio](https://aistudio.google.com/apikey).
+The app uses saved Settings keys first; `.env` is only a fallback.
 
-### 3. Run the app
+The app uses saved Settings keys first; `.env` is only a fallback for developers.
 
-**Development** (Vite dev server + Electron with hot reload):
+---
+
+## Download & Run (Portable)
+
+End users can run AI Translate **without installing Node.js** — download the portable build from GitHub Releases.
+
+### For users (after you publish a release)
+
+1. Open your repo on GitHub → **Releases**.
+2. Download **`AI-Translate-v1.0.0-Portable.exe`** (version number may differ).
+3. **Double-click** the file to run. No installer, no `npm install`.
+4. On first launch, open **Settings → API Keys** and add your [Gemini API key](https://aistudio.google.com/apikey).
+5. Use hotkeys or the main window to translate.
+
+> **Windows SmartScreen:** Unsigned apps may show a warning. Click **More info** → **Run anyway**. This is normal for open-source apps without a code-signing certificate.
+
+**Optional:** Place a `.env` file in the **same folder** as the portable `.exe` with `GEMINI_API_KEY=...` instead of using Settings.
+
+### For developers — build portable locally
+
+```bash
+npm install
+npm run dist:portable
+```
+
+Output:
+
+```
+release/AI-Translate-1.0.0-Portable.exe
+```
+
+Other build commands:
+
+| Command | Output |
+|---------|--------|
+| `npm run dist:portable` | Single portable `.exe` (Windows) |
+| `npm run dist:win` | Portable `.exe` + `.zip` |
+| `npm run dist` | Platform-default packages (portable on Windows) |
+| `npm run pack` | Unpacked folder in `release/win-unpacked/` (for testing) |
+
+---
+
+### 3. Run from source (developers)
 
 ```bash
 npm run dev
 ```
 
-**Production:**
+**Production (from source):**
 
 ```bash
 npm start
 ```
 
-**Build a Windows installer:**
+---
+
+## Setup (developers)
+
+### Run from source
+
+**Development** (Vite dev server + Electron with hot reload):
+
+## Releasing on GitHub
+
+Follow these steps to publish **v1.0.0** (or any first release) safely.
+
+### Before you push
+
+1. **Confirm secrets are ignored** — this repo's `.gitignore` already excludes:
+   - `.env` (API keys)
+   - `node_modules/`, `dist/`, `release/`
+
+2. **Never commit** your Gemini API key, `.env`, or `%APPDATA%/ai-translate/settings.json`.
+
+3. **Quick check** (in the project folder):
 
 ```bash
-npm run pack
+git status
 ```
 
-Output goes to the `release/` folder.
+Make sure `.env` does not appear under "Changes to be committed".
+
+### Step 1 — Create a GitHub repository
+
+1. Go to [github.com/new](https://github.com/new).
+2. Name it e.g. `AI_Translate`.
+3. Leave it **Public** or **Private** (your choice).
+4. **Do not** initialize with a README if you already have one locally.
+5. Click **Create repository**.
+
+### Step 2 — Push your code
+
+In PowerShell, from your project folder:
+
+```bash
+git init
+git add .
+git commit -m "Initial release: AI Translate v1.0.0"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/AI_Translate.git
+git push -u origin main
+```
+
+Replace `YOUR_USERNAME` with your GitHub username.
+
+### Step 3 — Tag the version
+
+```bash
+git tag -a v1.0.0 -m "AI Translate v1.0.0"
+git push origin v1.0.0
+```
+
+Tags mark official releases (e.g. `v1.0.0`, `v1.1.0`).
+
+### Step 4 — Create a GitHub Release (automated build)
+
+When you push a version tag, GitHub Actions builds the **portable Windows .exe** and attaches it to the release automatically.
+
+```bash
+git tag -a v1.0.0 -m "AI Translate v1.0.0"
+git push origin v1.0.0
+```
+
+1. Wait for the **Build Release** workflow to finish (Actions tab).
+2. Open **Releases** — the portable exe should be attached.
+3. Or create a release manually and attach `release/AI-Translate-*-Portable.exe` from a local `npm run dist:portable` build.
+
+**Release description** — example:
+
+```markdown
+## AI Translate v1.0.0
+
+First public release of the desktop translation app.
+
+### Features
+- Screen, region, and selection translation via Gemini
+- Dictionary-style popup for single words
+- Two-card layout for sentences and paragraphs
+- IPA + pronunciation audio
+- Customizable hotkeys and model fallbacks
+- API key management in Settings
+
+### Install (portable — recommended)
+1. Download **`AI-Translate-v1.0.0-Portable.exe`** from Assets below
+2. Double-click to run (no install needed)
+3. Settings → API Keys → add your Gemini key
+4. Press `Ctrl+Shift+T` / `R` / `S` to translate
+
+### Install (from source)
+1. Clone the repo
+2. `npm install`
+3. Add API key in Settings → API Keys
+4. `npm run dev` or `npm start`
+```
+
+5. Click **Publish release** (if drafting manually).
+
+### Step 5 — What users need
+
+**Portable download (recommended):**
+
+1. Download `AI-Translate-*-Portable.exe` from Releases
+2. Double-click to run
+3. Add a Gemini API key in **Settings → API Keys**
+
+**From source:**
+
+1. Install [Node.js 18+](https://nodejs.org/)
+2. Run `npm install`
+3. Add a Gemini API key in **Settings → API Keys**
+4. Run `npm run dev` or `npm start`
+
+### Optional next steps
+
+| Goal | Action |
+|------|--------|
+| **License** | Add a `LICENSE` file (MIT is already in `package.json`) |
+| **CI builds** | Add GitHub Actions to run `npm run build` on push |
+| **Installers** | Portable `.exe` is built automatically on tag push; see `.github/workflows/release.yml` |
+| **Changelog** | Keep release notes in GitHub Releases or a `CHANGELOG.md` |
 
 ---
 
@@ -370,6 +565,7 @@ AI_Translate/
 │   ├── selection.js           # Clipboard-based text selection (simulates Ctrl+C)
 │   ├── pronunciation.js       # Layout mode, IPA, word audio, phrase TTS
 │   ├── settings.js            # Settings load/save/migrate
+│   ├── api-keys.js            # API key storage, masking, active key resolution
 │   ├── models.js              # Gemini model list scanner
 │   ├── hotkey-recorder.js     # Hotkey capture in Settings
 │   └── hotkey-utils.js        # Hotkey validation and formatting
@@ -440,6 +636,9 @@ AI_Translate/
 | `popup:close` | Close result popup |
 | `settings:save` | Save settings and re-register hotkeys |
 | `hotkey:record` | Record a new hotkey in Settings |
+| `apiKeys:add` | Add a Gemini API key |
+| `apiKeys:remove` | Remove a saved API key |
+| `apiKeys:setActive` | Set the active API key |
 
 ---
 
@@ -494,7 +693,7 @@ https://dictionary.cambridge.org/dictionary/english/{base_word}
 
 | Problem | Solution |
 |---------|----------|
-| **"GEMINI_API_KEY is not set"** | Create `.env` in the project root with a valid `GEMINI_API_KEY` |
+| **"GEMINI_API_KEY is not set" / No API key** | Open **Settings → API Keys** and add a key, or set `GEMINI_API_KEY` in `.env` |
 | **Hotkey not working** | Another app may use the same shortcut — change it in Settings, or quit conflicting apps |
 | **Translation stuck / slow** | Add fallback models in Settings; each model times out after 10 seconds and switches automatically |
 | **Selection translate copies wrong text** | Make sure text is highlighted before pressing the hotkey; the app copies selection before opening the popup |

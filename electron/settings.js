@@ -26,6 +26,8 @@ const DEFAULT_SETTINGS = {
   hotkeyScreen: 'CommandOrControl+Shift+T',
   hotkeyRegion: 'CommandOrControl+Shift+R',
   hotkeySelection: 'CommandOrControl+Shift+S',
+  apiKeys: [],
+  activeApiKeyId: null,
 };
 
 const DEPRECATED_MODELS = new Set([
@@ -58,6 +60,16 @@ function migrateSettings(settings) {
       migrated[key] = DEFAULT_SETTINGS[key];
       changed = true;
     }
+  }
+
+  if (!Array.isArray(migrated.apiKeys)) {
+    migrated.apiKeys = [];
+    changed = true;
+  }
+
+  if (migrated.activeApiKeyId === undefined) {
+    migrated.activeApiKeyId = migrated.apiKeys[0]?.id || null;
+    changed = true;
   }
 
   return { migrated, changed };
@@ -100,12 +112,28 @@ function loadSettings() {
 
 function saveSettings(updates) {
   const current = loadSettings();
+  const { apiKeys: _ignoredKeys, activeApiKeyId: _ignoredActive, ...safeUpdates } = updates;
+
   settingsCache = {
     ...current,
-    ...updates,
+    ...safeUpdates,
     fallbackModels: Array.isArray(updates.fallbackModels)
       ? updates.fallbackModels
       : current.fallbackModels,
+    apiKeys: current.apiKeys,
+    activeApiKeyId: current.activeApiKeyId,
+  };
+
+  fs.mkdirSync(path.dirname(getSettingsPath()), { recursive: true });
+  fs.writeFileSync(getSettingsPath(), JSON.stringify(settingsCache, null, 2), 'utf8');
+  return settingsCache;
+}
+
+function saveApiKeyState(apiKeyUpdates) {
+  const current = loadSettings();
+  settingsCache = {
+    ...current,
+    ...apiKeyUpdates,
   };
 
   fs.mkdirSync(path.dirname(getSettingsPath()), { recursive: true });
@@ -118,9 +146,26 @@ function getDefaultSettings() {
 }
 
 function resetSettings() {
-  settingsCache = { ...DEFAULT_SETTINGS };
+  const current = loadSettings();
+  settingsCache = {
+    ...DEFAULT_SETTINGS,
+    apiKeys: current.apiKeys || [],
+    activeApiKeyId: current.activeApiKeyId || null,
+  };
   fs.writeFileSync(getSettingsPath(), JSON.stringify(settingsCache, null, 2), 'utf8');
   return settingsCache;
+}
+
+function getPublicSettings() {
+  const settings = loadSettings();
+  const { getApiKeysPublic } = require('./api-keys');
+  const { apiKeys: _rawKeys, ...rest } = settings;
+
+  return {
+    ...rest,
+    apiKeys: getApiKeysPublic(settings),
+    hasEnvApiKey: Boolean(process.env.GEMINI_API_KEY?.trim()),
+  };
 }
 
 function resolveSystemPrompt(settings) {
@@ -136,7 +181,9 @@ module.exports = {
   DEFAULT_SETTINGS,
   loadSettings,
   saveSettings,
+  saveApiKeyState,
   getDefaultSettings,
   resetSettings,
   resolveSystemPrompt,
+  getPublicSettings,
 };

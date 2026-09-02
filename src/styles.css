@@ -262,6 +262,82 @@ body {
   line-height: 1.4;
 }
 
+.settings-section-hint a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.settings-section-hint a:hover {
+  text-decoration: underline;
+}
+
+.api-key-env-note code {
+  font-family: 'Consolas', 'Segoe UI', monospace;
+  color: #bbb;
+}
+
+.api-key-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.api-key-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.api-key-list li.active {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.api-key-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.api-key-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.api-key-meta strong {
+  font-size: 13px;
+  color: #eee;
+}
+
+.api-key-mask {
+  font-size: 12px;
+  color: #888;
+  font-family: 'Consolas', 'Segoe UI', monospace;
+}
+
+.api-key-delete {
+  flex-shrink: 0;
+}
+
+.api-key-add {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
 .hotkey-field {
   margin-bottom: 10px;
 }

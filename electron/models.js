@@ -1,4 +1,6 @@
 const { GoogleGenAI } = require('@google/genai');
+const { loadSettings } = require('./settings');
+const { resolveApiKey } = require('./api-keys');
 
 const SCAN_TIMEOUT_MS = 20000;
 
@@ -74,9 +76,12 @@ async function collectModels(pager, limit = 100) {
  * Uses the models.list API — only models your key can access are returned.
  */
 async function scanAvailableModels() {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const settings = loadSettings();
+  const apiKey = resolveApiKey(settings);
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not set. Add your key in the .env file.');
+    throw new Error(
+      'No Gemini API key configured. Open Settings → API Keys to add one.'
+    );
   }
 
   const ai = new GoogleGenAI({ apiKey });

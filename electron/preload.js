@@ -24,6 +24,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getDefaultSettings: () => ipcRenderer.invoke('settings:getDefaults'),
   saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
   resetSettings: () => ipcRenderer.invoke('settings:reset'),
+  addApiKey: (payload) => ipcRenderer.invoke('apiKeys:add', payload),
+  removeApiKey: (id) => ipcRenderer.invoke('apiKeys:remove', id),
+  setActiveApiKey: (id) => ipcRenderer.invoke('apiKeys:setActive', id),
+  updateApiKeyLabel: (payload) => ipcRenderer.invoke('apiKeys:updateLabel', payload),
   scanModels: () => ipcRenderer.invoke('models:scan'),
   recordHotkey: () => ipcRenderer.invoke('hotkey:record'),
 });

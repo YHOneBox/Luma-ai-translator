@@ -225,7 +225,7 @@ function PhraseResult({
   onCopyTranslation,
 }) {
   const source =
-    data.sourceDisplay || data.sourceText || data.source_text || data.example_sentence || '';
+    data.sourceDisplay || data.sourceText || data.source_text || '';
   const translation = data.translation || '';
   const needsExpand = source.length > SOURCE_COLLAPSE_CHARS;
 
