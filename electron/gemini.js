@@ -1,7 +1,7 @@
 const { GoogleGenAI, Type } = require('@google/genai');
 const { loadSettings, resolveSystemPrompt } = require('./settings');
 
-const MODEL_TIMEOUT_MS = 45000;
+const PER_MODEL_TIMEOUT_MS = 10000;
 
 const TRANSLATION_SCHEMA = {
   type: Type.OBJECT,
@@ -20,7 +20,12 @@ const TRANSLATION_SCHEMA = {
     },
     context_explanation: {
       type: Type.STRING,
-      description: 'A brief explanation of the meaning and usage context in the target language.',
+      description: 'General meaning and typical usage in the target language (1–2 sentences).',
+    },
+    usage_in_context: {
+      type: Type.STRING,
+      description:
+        '2–4 sentences in the target language explaining how this word/phrase is used in the specific captured screenshot or selected text. Reference the actual surrounding context, domain, register, tone, and why this translation fits that exact situation.',
     },
     part_of_speech: {
       type: Type.STRING,
@@ -37,6 +42,7 @@ const TRANSLATION_SCHEMA = {
     'example_sentence',
     'example_translation',
     'context_explanation',
+    'usage_in_context',
     'base_word',
     'part_of_speech',
   ],
@@ -45,6 +51,7 @@ const TRANSLATION_SCHEMA = {
     'example_sentence',
     'example_translation',
     'context_explanation',
+    'usage_in_context',
     'part_of_speech',
     'base_word',
   ],
@@ -75,6 +82,7 @@ function formatResult(parsed, modelUsed, extra = {}) {
     example_sentence: parsed.example_sentence ?? '',
     example_translation: parsed.example_translation ?? '',
     context_explanation: parsed.context_explanation ?? '',
+    usage_in_context: parsed.usage_in_context ?? '',
     part_of_speech: parsed.part_of_speech ?? '',
     base_word: parsed.base_word ?? '',
     dictionaryUrl: `https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(baseWord)}`,
@@ -123,8 +131,8 @@ async function generateWithFallback(ai, settings, systemPrompt, contents, onProg
             responseJsonSchema: TRANSLATION_SCHEMA,
           },
         }),
-        MODEL_TIMEOUT_MS,
-        `Timed out after ${MODEL_TIMEOUT_MS / 1000}s`
+        PER_MODEL_TIMEOUT_MS,
+        `Timed out after ${PER_MODEL_TIMEOUT_MS / 1000}s`
       );
 
       const text = response.text;
@@ -134,7 +142,13 @@ async function generateWithFallback(ai, settings, systemPrompt, contents, onProg
 
       return { parsed: JSON.parse(text), model };
     } catch (err) {
-      errors.push(`${model}: ${shortenError(err)}`);
+      const reason = shortenError(err);
+      errors.push(`${model}: ${reason}`);
+
+      const nextModel = modelsToTry[i + 1];
+      if (nextModel && reason.includes('Timed out')) {
+        onProgress?.(`Timed out on ${model}, trying ${nextModel}...`);
+      }
     }
   }
 
@@ -159,7 +173,7 @@ async function translateScreenshot(imageBuffer, onProgress) {
       {
         role: 'user',
         parts: [
-          { text: 'Analyze the screenshot and return the structured translation.' },
+          { text: 'Analyze the screenshot and return the structured translation. For usage_in_context, explain how the text is used specifically within what you see on screen.' },
           {
             inlineData: {
               mimeType: 'image/png',
@@ -196,7 +210,7 @@ async function translateText(text, onProgress) {
         role: 'user',
         parts: [
           {
-            text: `Translate the following selected text and return structured JSON:\n\n${text}`,
+            text: `Translate the following selected text and return structured JSON. For usage_in_context, explain how the word/phrase is used specifically within this selection and its immediate context:\n\n${text}`,
           },
         ],
       },

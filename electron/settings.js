@@ -11,7 +11,8 @@ Return structured JSON with:
 - translation: the translation or definition in {targetLanguage}
 - example_sentence: a natural example sentence using the word/phrase in the source language
 - example_translation: translation of the example sentence into {targetLanguage}
-- context_explanation: brief explanation of meaning and when to use it, in {targetLanguage}
+- context_explanation: general meaning and typical usage, in {targetLanguage}
+- usage_in_context: 2–4 sentences in {targetLanguage} explaining how the word/phrase is used in THIS specific screenshot or selected text — reference the actual surrounding context, domain, register, and why this translation fits
 - part_of_speech: part of speech abbreviation (e.g. n., v., adj.) when applicable, otherwise empty string
 - base_word: the primary English dictionary headword (lowercase, single word or short phrase suitable for Cambridge Dictionary lookup)`;
 

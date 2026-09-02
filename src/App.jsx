@@ -151,9 +151,18 @@ export default function App() {
   return (
     <div className="popup-shell">
       <div className="popup-card">
-        <button className="close-btn" onClick={closePopup} aria-label="Close">
-          ×
-        </button>
+        <header className="popup-titlebar">
+          <div className="popup-titlebar-drag">
+            {state === 'loading' ? message : 'AI Translate'}
+          </div>
+          <button
+            className="close-btn no-drag"
+            onClick={closePopup}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </header>
 
         {state === 'loading' && (
           <div className="loading-state">
@@ -217,7 +226,7 @@ export default function App() {
               </section>
             )}
 
-            {data.context_explanation && (
+            {(data.context_explanation || data.usage_in_context) && (
               <section className="context-card">
                 <div className="context-card-header">
                   <span className="context-word">{data.translation}</span>
@@ -243,7 +252,15 @@ export default function App() {
                     </button>
                   </div>
                 </div>
-                <p className="context-text">{data.context_explanation}</p>
+                {data.context_explanation && (
+                  <p className="context-text">{data.context_explanation}</p>
+                )}
+                {data.usage_in_context && (
+                  <div className="context-usage">
+                    <span className="context-usage-label">In this context</span>
+                    <p className="context-text">{data.usage_in_context}</p>
+                  </div>
+                )}
               </section>
             )}
 
