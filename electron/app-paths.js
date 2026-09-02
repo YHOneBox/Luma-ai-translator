@@ -5,16 +5,23 @@ const { app } = require('electron');
 let dataRoot = null;
 
 /**
- * Keep all persistent files next to the portable .exe (not in AppData).
- * electron-builder sets PORTABLE_EXECUTABLE_DIR for portable builds.
+ * Keep persistent files beside the portable .exe (Windows) or AppImage (Linux).
+ * electron-builder sets PORTABLE_EXECUTABLE_DIR for portable builds; AppImage sets APPIMAGE.
+ * macOS and other Linux packages use Electron's default userData (Application Support / .config).
  */
 function configureAppPaths() {
   if (!app.isPackaged) {
     return null;
   }
 
-  const portableExeDir =
-    process.env.PORTABLE_EXECUTABLE_DIR || path.dirname(process.execPath);
+  let portableExeDir = null;
+  if (process.env.PORTABLE_EXECUTABLE_DIR) {
+    portableExeDir = process.env.PORTABLE_EXECUTABLE_DIR;
+  } else if (process.env.APPIMAGE) {
+    portableExeDir = path.dirname(process.env.APPIMAGE);
+  } else {
+    return null;
+  }
 
   dataRoot = path.join(portableExeDir, 'AI-Translate-Data');
 
@@ -31,6 +38,7 @@ function configureAppPaths() {
       `# AI Translate — local data folder
 # Safe to delete this entire "AI-Translate-Data" folder to remove all saved settings.
 # The portable app does NOT write to Windows AppData or the registry.
+# (macOS/Linux builds store settings in the system app-data folder unless you use AppImage.)
 
 # Contents:
 #   userData/settings.json  — hotkeys, models, API keys (if saved in Settings)

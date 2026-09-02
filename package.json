@@ -10,7 +10,9 @@
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "dist:portable": "npm run build && electron-builder --win portable",
-    "dist:win": "npm run build && electron-builder --win portable zip"
+    "dist:win": "npm run build && electron-builder --win portable zip",
+    "dist:mac": "npm run build && electron-builder --mac dmg zip",
+    "dist:linux": "npm run build && electron-builder --linux AppImage zip"
   },
   "author": "",
   "license": "MIT",
@@ -55,11 +57,17 @@
     },
     "mac": {
       "icon": "assets/logo.png",
-      "target": ["dmg", "zip"]
+      "target": ["dmg", "zip"],
+      "identity": null,
+      "gatekeeperAssess": false,
+      "hardenedRuntime": false,
+      "category": "public.app-category.productivity"
     },
     "linux": {
       "icon": "assets/logo.png",
-      "target": ["AppImage", "zip"]
+      "target": ["AppImage", "zip"],
+      "category": "Utility",
+      "maintainer": "AI Translate"
     }
   }
 }

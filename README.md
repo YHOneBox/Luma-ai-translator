@@ -379,8 +379,15 @@ End users can run AI Translate **without installing Node.js** — download the p
 ### For users (after you publish a release)
 
 1. Open your repo on GitHub → **Releases**.
-2. Download **`AI-Translate-v1.0.0-Portable.exe`** (version number may differ).
-3. **Double-click** the file to run. No installer, no `npm install`.
+2. Download the build for your platform from **Assets**:
+
+| Platform | File | How to run |
+|----------|------|------------|
+| **Windows** | `AI-Translate-*-Portable.exe` | Double-click (no install) |
+| **macOS** | `AI-Translate-*-mac-*.dmg` or `.zip` | Open DMG, drag to Applications; or unzip |
+| **Linux** | `AI-Translate-*-linux-*.AppImage` or `.zip` | `chmod +x` AppImage, then run; or unzip |
+
+3. Run the app (see table above).
 4. On first launch, open **Settings → API Keys** and add your [Gemini API key](https://aistudio.google.com/apikey).
 5. Use hotkeys or the main window to translate.
 
@@ -420,8 +427,10 @@ Other build commands:
 
 | Command | Output |
 |---------|--------|
-| `npm run dist:portable` | Single portable `.exe` (Windows) |
-| `npm run dist:win` | Portable `.exe` + `.zip` |
+| `npm run dist:portable` | Windows portable `.exe` |
+| `npm run dist:mac` | macOS `.dmg` + `.zip` |
+| `npm run dist:linux` | Linux `.AppImage` + `.zip` |
+| `npm run dist:win` | Windows portable `.exe` + `.zip` |
 | `npm run dist` | Platform-default packages (portable on Windows) |
 | `npm run pack` | Unpacked folder in `release/win-unpacked/` (for testing) |
 
@@ -501,15 +510,15 @@ Tags mark official releases (e.g. `v1.0.0`, `v1.1.0`).
 
 ### Step 4 — Create a GitHub Release (automated build)
 
-When you push a version tag, GitHub Actions builds the **portable Windows .exe** and attaches it to the release automatically.
+When you push a version tag, GitHub Actions builds for **Windows, macOS, and Linux** and attaches all files to the release automatically.
 
 ```bash
 git tag -a v1.0.0 -m "AI Translate v1.0.0"
 git push origin v1.0.0
 ```
 
-1. Wait for the **Build Release** workflow to finish (Actions tab).
-2. Open **Releases** — the portable exe should be attached.
+1. Wait for the **Build Release** workflow to finish (Actions tab — three build jobs + publish).
+2. Open **Releases** — assets should include `.exe`, `.dmg`, `.AppImage`, and `.zip` files.
 3. Or create a release manually and attach `release/AI-Translate-*-Portable.exe` from a local `npm run dist:portable` build.
 
 **Release description** — example:
@@ -527,11 +536,11 @@ First public release of the desktop translation app.
 - Customizable hotkeys and model fallbacks
 - API key management in Settings
 
-### Install (portable — recommended)
-1. Download **`AI-Translate-v1.0.0-Portable.exe`** from Assets below
-2. Double-click to run (no install needed)
+### Install (download — recommended)
+1. Download the file for your OS from Assets below (`.exe` / `.dmg` / `.AppImage`)
+2. Run the app (see platform table in Download & Run section)
 3. Settings → API Keys → add your Gemini key
-4. Press `Ctrl+Shift+T` / `R` / `S` to translate
+4. Press `Ctrl+Shift+T` / `R` / `S` to translate (macOS uses `Cmd` instead of `Ctrl`)
 
 ### Install (from source)
 1. Clone the repo
@@ -546,8 +555,8 @@ First public release of the desktop translation app.
 
 **Portable download (recommended):**
 
-1. Download `AI-Translate-*-Portable.exe` from Releases
-2. Double-click to run
+1. Download the build for your OS from Releases
+2. Run the app
 3. Add a Gemini API key in **Settings → API Keys**
 
 **From source:**
@@ -563,7 +572,7 @@ First public release of the desktop translation app.
 |------|--------|
 | **License** | Add a `LICENSE` file (MIT is already in `package.json`) |
 | **CI builds** | Add GitHub Actions to run `npm run build` on push |
-| **Installers** | Portable `.exe` is built automatically on tag push; see `.github/workflows/release.yml` |
+| **Installers** | Windows, macOS, and Linux builds on every tag push; see `.github/workflows/release.yml` |
 | **Changelog** | Keep release notes in GitHub Releases or a `CHANGELOG.md` |
 
 ---
