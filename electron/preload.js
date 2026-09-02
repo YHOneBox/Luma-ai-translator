@@ -1,0 +1,29 @@
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  translateScreen: () => ipcRenderer.send('translate:screen'),
+  translateRegion: () => ipcRenderer.send('translate:region'),
+  translateSelection: () => ipcRenderer.send('translate:selection'),
+  onTranslationLoading: (callback) => {
+    ipcRenderer.on('translation:loading', (_event, data) => callback(data));
+  },
+  onTranslationResult: (callback) => {
+    ipcRenderer.on('translation:result', (_event, data) => callback(data));
+  },
+  onTranslationError: (callback) => {
+    ipcRenderer.on('translation:error', (_event, data) => callback(data));
+  },
+  onTranslationPronunciation: (callback) => {
+    ipcRenderer.on('translation:pronunciation', (_event, data) => callback(data));
+  },
+  closePopup: () => ipcRenderer.send('popup:close'),
+  openDictionary: (url) => ipcRenderer.send('dictionary:open', url),
+  regionComplete: (region) => ipcRenderer.send('region:complete', region),
+  regionCancel: () => ipcRenderer.send('region:cancel'),
+  getSettings: () => ipcRenderer.invoke('settings:get'),
+  getDefaultSettings: () => ipcRenderer.invoke('settings:getDefaults'),
+  saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
+  resetSettings: () => ipcRenderer.invoke('settings:reset'),
+  scanModels: () => ipcRenderer.invoke('models:scan'),
+  recordHotkey: () => ipcRenderer.invoke('hotkey:record'),
+});
