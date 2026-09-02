@@ -386,7 +386,22 @@ End users can run AI Translate **without installing Node.js** — download the p
 
 > **Windows SmartScreen:** Unsigned apps may show a warning. Click **More info** → **Run anyway**. This is normal for open-source apps without a code-signing certificate.
 
-**Optional:** Place a `.env` file in the **same folder** as the portable `.exe` with `GEMINI_API_KEY=...` instead of using Settings.
+### What gets stored on disk?
+
+The portable app is designed to stay **self-contained** — it does **not** install, does **not** write to the registry, and does **not** use `%APPDATA%`.
+
+| Location | Stored? | What's in it |
+|----------|---------|--------------|
+| **`AI-Translate-Data/`** (next to the `.exe`) | Only if you change settings or save an API key | `settings.json` (hotkeys, models, API keys) |
+| **`AI-Translate-Data/cache/`** | Temporary | Cleared automatically when you quit the app |
+| **Windows AppData** | No | — |
+| **Registry** | No | — |
+| **Translation history** | No | Nothing is logged locally |
+| **Network** | Yes (required) | Gemini API, pronunciation/TTS lookups only when you translate |
+
+**To remove everything:** quit the app and delete the `AI-Translate-Data` folder next to the portable `.exe`.
+
+**Optional:** Place a `.env` file next to the `.exe` with `GEMINI_API_KEY=...` instead of saving keys in Settings (you manage that file yourself).
 
 ### For developers — build portable locally
 
@@ -699,7 +714,8 @@ https://dictionary.cambridge.org/dictionary/english/{base_word}
 | **Selection translate copies wrong text** | Make sure text is highlighted before pressing the hotkey; the app copies selection before opening the popup |
 | **No IPA or pronunciation** | Only on **word layout** for English headwords; phrase layout uses TTS instead |
 | **Wrong popup layout** | One word → word layout; multiple words → phrase layout; depends on `source_text` / selection |
-| **Phrase audio missing** | TTS is limited to 200 chars; very long text may not produce audio |
+| **Phrase audio missing** | TTS is limited to 480 chars; very long text may not produce audio |
+| **Where is my data stored?** | Portable builds: `AI-Translate-Data/` next to the `.exe` only — delete that folder to wipe all local data |
 | **Blank screenshot** | Grant screen recording permission (macOS: System Settings → Privacy → Screen Recording) |
 | **Model scan shows no models** | Check your API key; click **Scan models** again in Settings |
 

@@ -2,11 +2,20 @@ require('dotenv').config();
 
 const path = require('path');
 
-// Allow optional .env next to the portable .exe (in addition to project-root .env in dev)
+// Optional .env next to the portable .exe (developer / power-user fallback)
 require('dotenv').config({ path: path.join(path.dirname(process.execPath), '.env') });
 
+const { app } = require('electron');
+const { configureAppPaths, cleanupPortableCache } = require('./app-paths');
+
+configureAppPaths();
+
+// Reduce disk footprint for packaged builds
+if (app.isPackaged) {
+  app.commandLine.appendSwitch('disable-http-cache');
+}
+
 const {
-  app,
   BrowserWindow,
   globalShortcut,
   ipcMain,
@@ -445,6 +454,7 @@ app.whenReady().then(() => {
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
+  cleanupPortableCache();
 });
 
 app.on('window-all-closed', (e) => {
