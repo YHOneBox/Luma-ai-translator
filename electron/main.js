@@ -23,7 +23,7 @@ const {
 } = require('./settings');
 const { scanAvailableModels } = require('./models');
 const { validateHotkeys } = require('./hotkey-utils');
-const { enrichWithPronunciation, resolveLookupWord } = require('./pronunciation');
+const { enrichWithPronunciation, enrichPhraseResult, resolveLookupWord, resolveLayoutMode } = require('./pronunciation');
 const { recordHotkey } = require('./hotkey-recorder');
 
 const isDev = !app.isPackaged;
@@ -245,24 +245,24 @@ async function runWithPopup(task) {
 
   try {
     const result = await task(sendProgress);
-    sendToPopup('translation:result', {
-      ...result,
-      isSingleWord: Boolean(resolveLookupWord(result)),
-      lookupWord: resolveLookupWord(result) || undefined,
-    });
+    const layoutMode = resolveLayoutMode(result);
+    let enriched;
 
-    enrichWithPronunciation(result)
-      .then((enriched) => {
-        if (
-          enriched.isSingleWord &&
-          (enriched.phonetic || enriched.audioUk || enriched.audioUs)
-        ) {
-          sendToPopup('translation:pronunciation', enriched);
-        }
-      })
-      .catch(() => {
-        // pronunciation is optional
-      });
+    if (layoutMode === 'word') {
+      sendProgress('Loading pronunciation...');
+      enriched = await enrichWithPronunciation(result);
+    } else {
+      sendProgress('Loading audio...');
+      const { targetLanguage } = loadSettings();
+      enriched = await enrichPhraseResult(result, targetLanguage);
+    }
+
+    sendToPopup('translation:result', {
+      ...enriched,
+      layoutMode: enriched.layoutMode || layoutMode,
+      isSingleWord: layoutMode === 'word' && Boolean(enriched.isSingleWord),
+      lookupWord: enriched.lookupWord || resolveLookupWord(enriched) || undefined,
+    });
   } catch (err) {
     sendToPopup('translation:error', {
       message: err.message || 'Translation failed.',

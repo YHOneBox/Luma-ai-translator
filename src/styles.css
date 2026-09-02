@@ -1000,6 +1000,75 @@ html.popup-page #root {
   padding-top: 4px;
 }
 
+/* ── Phrase result (sentence / paragraph) ── */
+
+.phrase-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.phrase-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.phrase-card-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #ccc;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.phrase-card-text.phrase-translation {
+  font-weight: 700;
+  color: #f0f0f5;
+}
+
+.phrase-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.phrase-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.phrase-show-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #888;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.phrase-show-all:hover {
+  color: #ccc;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.icon-chevron {
+  width: 16px;
+  height: 16px;
+}
+
 /* ── Region Selector ── */
 
 html.region-page,

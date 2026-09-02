@@ -10,6 +10,11 @@ const TRANSLATION_SCHEMA = {
       type: Type.STRING,
       description: 'The translated text.',
     },
+    source_text: {
+      type: Type.STRING,
+      description:
+        'The original text exactly as captured from the screenshot or selection (source language).',
+    },
     example_sentence: {
       type: Type.STRING,
       description: 'An example sentence using the source word or phrase in context (in the source language).',
@@ -31,6 +36,11 @@ const TRANSLATION_SCHEMA = {
       type: Type.STRING,
       description: 'Part of speech abbreviation, e.g. n., v., adj., adv.',
     },
+    phonetic_ipa: {
+      type: Type.STRING,
+      description:
+        'IPA phonetic transcription for a single English headword, e.g. /ˈælɡəɹɪðəm/. Empty string if not a single English word.',
+    },
     base_word: {
       type: Type.STRING,
       description:
@@ -39,20 +49,24 @@ const TRANSLATION_SCHEMA = {
   },
   required: [
     'translation',
+    'source_text',
     'example_sentence',
     'example_translation',
     'context_explanation',
     'usage_in_context',
     'base_word',
     'part_of_speech',
+    'phonetic_ipa',
   ],
   propertyOrdering: [
     'translation',
+    'source_text',
     'example_sentence',
     'example_translation',
     'context_explanation',
     'usage_in_context',
     'part_of_speech',
+    'phonetic_ipa',
     'base_word',
   ],
 };
@@ -79,11 +93,13 @@ function formatResult(parsed, modelUsed, extra = {}) {
 
   return {
     translation: parsed.translation ?? '',
+    source_text: parsed.source_text ?? '',
     example_sentence: parsed.example_sentence ?? '',
     example_translation: parsed.example_translation ?? '',
     context_explanation: parsed.context_explanation ?? '',
     usage_in_context: parsed.usage_in_context ?? '',
     part_of_speech: parsed.part_of_speech ?? '',
+    phonetic_ipa: parsed.phonetic_ipa ?? '',
     base_word: parsed.base_word ?? '',
     dictionaryUrl: `https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(baseWord)}`,
     modelUsed,
@@ -218,7 +234,7 @@ async function translateText(text, onProgress) {
     onProgress
   );
 
-  return formatResult(parsed, model, { sourceText: text });
+    return formatResult(parsed, model, { sourceText: text, source_text: text });
 }
 
 module.exports = { translateScreenshot, translateText };

@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 
+const SOURCE_COLLAPSE_CHARS = 140;
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -58,12 +60,214 @@ function CopyIcon() {
   );
 }
 
+function ChevronIcon({ up }) {
+  return (
+    <svg
+      className="icon-chevron"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {up ? <path d="M18 15l-6-6-6 6" /> : <path d="M6 9l6 6 6-6" />}
+    </svg>
+  );
+}
+
+function PhraseCard({ text, bold, audioUrl, playing, onPlay, onCopy, copied, expand, onToggleExpand, needsExpand }) {
+  const displayText =
+    !expand && needsExpand ? `${text.slice(0, SOURCE_COLLAPSE_CHARS).trim()}…` : text;
+
+  return (
+    <section className="phrase-card">
+      <p className={`phrase-card-text ${bold ? 'phrase-translation' : ''}`}>{displayText}</p>
+      <div className="phrase-card-footer">
+        <div className="phrase-card-actions">
+          {audioUrl && (
+            <button
+              type="button"
+              className={`icon-btn ${playing ? 'active' : ''}`}
+              onClick={onPlay}
+              aria-label="Play audio"
+            >
+              <SpeakerIcon active={playing} />
+            </button>
+          )}
+          <button
+            type="button"
+            className={`icon-btn ${copied ? 'active' : ''}`}
+            onClick={onCopy}
+            aria-label="Copy text"
+            title={copied ? 'Copied' : 'Copy'}
+          >
+            <CopyIcon />
+          </button>
+        </div>
+        {needsExpand && (
+          <button type="button" className="phrase-show-all" onClick={onToggleExpand}>
+            {expand ? 'Show less' : 'Show all'}
+            <ChevronIcon up={expand} />
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function WordResult({ data, playing, copied, onPlay, onCopy }) {
+  const displayWord =
+    data.base_word || data.sourceText || data.lookupWord || data.translation || '';
+  const highlightTarget = data.base_word || data.sourceText || '';
+  const hasAudio = Boolean(data.audioDataUrl || data.audioUs || data.audioUk);
+  const phoneticDisplay =
+    data.phonetic || data.phonetic_ipa
+      ? (data.phonetic || data.phonetic_ipa).startsWith('/')
+        ? data.phonetic || data.phonetic_ipa
+        : `/${data.phonetic || data.phonetic_ipa}/`
+      : '';
+
+  return (
+    <>
+      <header className="word-header">
+        <div className="word-title-row">
+          <h1 className="word-title">{displayWord}</h1>
+          {(phoneticDisplay || hasAudio) && (
+            <div className="word-phonetic-row">
+              {phoneticDisplay && (
+                <span className="phonetic-inline">{phoneticDisplay}</span>
+              )}
+              {hasAudio && (
+                <button
+                  type="button"
+                  className={`icon-btn ${playing ? 'active' : ''}`}
+                  onClick={onPlay}
+                  aria-label="Play pronunciation"
+                >
+                  <SpeakerIcon active={playing} />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        <p className="pos-translation">
+          {data.part_of_speech && (
+            <span className="part-of-speech">{data.part_of_speech}</span>
+          )}
+          <span className="main-translation">{data.translation}</span>
+        </p>
+      </header>
+
+      {data.example_sentence && (
+        <section className="example-section">
+          <p className="example-en">
+            {highlightWord(data.example_sentence, highlightTarget)}
+          </p>
+          {data.example_translation && (
+            <p className="example-target">{data.example_translation}</p>
+          )}
+        </section>
+      )}
+
+      {(data.context_explanation || data.usage_in_context) && (
+        <section className="context-card">
+          <div className="context-card-header">
+            <span className="context-word">{data.translation}</span>
+            <div className="context-actions">
+              {hasAudio && (
+                <button
+                  type="button"
+                  className={`icon-btn ${playing ? 'active' : ''}`}
+                  onClick={onPlay}
+                  aria-label="Play pronunciation"
+                >
+                  <SpeakerIcon active={playing} />
+                </button>
+              )}
+              <button
+                type="button"
+                className={`icon-btn ${copied ? 'active' : ''}`}
+                onClick={onCopy}
+                aria-label="Copy translation"
+                title={copied ? 'Copied' : 'Copy translation'}
+              >
+                <CopyIcon />
+              </button>
+            </div>
+          </div>
+          {data.context_explanation && (
+            <p className="context-text">{data.context_explanation}</p>
+          )}
+          {data.usage_in_context && (
+            <div className="context-usage">
+              <span className="context-usage-label">In this context</span>
+              <p className="context-text">{data.usage_in_context}</p>
+            </div>
+          )}
+        </section>
+      )}
+    </>
+  );
+}
+
+function PhraseResult({
+  data,
+  playing,
+  copied,
+  sourceExpanded,
+  onToggleSourceExpand,
+  onPlaySource,
+  onPlayTranslation,
+  onCopySource,
+  onCopyTranslation,
+}) {
+  const source =
+    data.sourceDisplay || data.sourceText || data.source_text || data.example_sentence || '';
+  const translation = data.translation || '';
+  const needsExpand = source.length > SOURCE_COLLAPSE_CHARS;
+
+  return (
+    <div className="phrase-result">
+      {source && (
+        <PhraseCard
+          text={source}
+          audioUrl={data.sourceAudioDataUrl}
+          playing={playing === 'source'}
+          onPlay={onPlaySource}
+          onCopy={onCopySource}
+          copied={copied === 'source'}
+          expand={sourceExpanded}
+          onToggleExpand={onToggleSourceExpand}
+          needsExpand={needsExpand}
+        />
+      )}
+      {translation && (
+        <PhraseCard
+          text={translation}
+          bold
+          audioUrl={data.translationAudioDataUrl}
+          playing={playing === 'translation'}
+          onPlay={onPlayTranslation}
+          onCopy={onCopyTranslation}
+          copied={copied === 'translation'}
+          expand
+          needsExpand={false}
+        />
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [state, setState] = useState('loading');
   const [message, setMessage] = useState('Translating...');
   const [data, setData] = useState(null);
-  const [playing, setPlaying] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [playing, setPlaying] = useState(null);
+  const [copied, setCopied] = useState(null);
+  const [sourceExpanded, setSourceExpanded] = useState(false);
   const audioRef = useRef(null);
 
   const closePopup = useCallback(() => {
@@ -81,17 +285,14 @@ export default function App() {
       setState('loading');
       setMessage(msg || 'Translating...');
       setData(null);
-      setPlaying(false);
-      setCopied(false);
+      setPlaying(null);
+      setCopied(null);
+      setSourceExpanded(false);
     });
 
     api.onTranslationResult((result) => {
       setState('success');
       setData(result);
-    });
-
-    api.onTranslationPronunciation((pronunciation) => {
-      setData((prev) => (prev ? { ...prev, ...pronunciation } : pronunciation));
     });
 
     api.onTranslationError(({ message: msg }) => {
@@ -109,8 +310,7 @@ export default function App() {
     };
   }, []);
 
-  const playPronunciation = () => {
-    const url = data?.audioUs || data?.audioUk;
+  const playAudio = (url, label) => {
     if (!url) return;
 
     if (audioRef.current) {
@@ -119,34 +319,26 @@ export default function App() {
 
     const audio = new Audio(url);
     audioRef.current = audio;
-    setPlaying(true);
+    setPlaying(label);
 
-    audio.onended = () => setPlaying(false);
-    audio.onerror = () => setPlaying(false);
-    audio.play().catch(() => setPlaying(false));
+    audio.onended = () => setPlaying(null);
+    audio.onerror = () => setPlaying(null);
+    audio.play().catch(() => setPlaying(null));
   };
 
-  const copyTranslation = async () => {
-    if (!data?.translation) return;
+  const copyText = async (text, label) => {
+    if (!text) return;
 
     try {
-      await navigator.clipboard.writeText(data.translation);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      await navigator.clipboard.writeText(text);
+      setCopied(label);
+      setTimeout(() => setCopied(null), 1500);
     } catch {
       // ignore
     }
   };
 
-  const displayWord =
-    data?.base_word || data?.sourceText || data?.lookupWord || data?.translation || '';
-  const highlightTarget = data?.base_word || data?.sourceText || '';
-  const hasAudio = Boolean(data?.audioUs || data?.audioUk);
-  const phoneticDisplay = data?.phonetic
-    ? data.phonetic.startsWith('/')
-      ? data.phonetic
-      : `/${data.phonetic}/`
-    : '';
+  const isPhraseLayout = data?.layoutMode === 'phrase';
 
   return (
     <div className="popup-shell">
@@ -183,85 +375,35 @@ export default function App() {
 
         {state === 'success' && data && (
           <div className="result-state">
-            <header className="word-header">
-              <div className="word-title-row">
-                <h1 className="word-title">{displayWord}</h1>
-                {data.isSingleWord && (
-                  <div className="word-phonetic-row">
-                    {phoneticDisplay ? (
-                      <span className="phonetic-inline">{phoneticDisplay}</span>
-                    ) : !hasAudio ? (
-                      <span className="phonetic-inline phonetic-muted">Loading…</span>
-                    ) : null}
-                    {hasAudio && (
-                      <button
-                        type="button"
-                        className={`icon-btn ${playing ? 'active' : ''}`}
-                        onClick={playPronunciation}
-                        aria-label="Play pronunciation"
-                      >
-                        <SpeakerIcon active={playing} />
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <p className="pos-translation">
-                {data.part_of_speech && (
-                  <span className="part-of-speech">{data.part_of_speech}</span>
-                )}
-                <span className="main-translation">{data.translation}</span>
-              </p>
-            </header>
-
-            {data.example_sentence && (
-              <section className="example-section">
-                <p className="example-en">
-                  {highlightWord(data.example_sentence, highlightTarget)}
-                </p>
-                {data.example_translation && (
-                  <p className="example-target">{data.example_translation}</p>
-                )}
-              </section>
-            )}
-
-            {(data.context_explanation || data.usage_in_context) && (
-              <section className="context-card">
-                <div className="context-card-header">
-                  <span className="context-word">{data.translation}</span>
-                  <div className="context-actions">
-                    {hasAudio && (
-                      <button
-                        type="button"
-                        className={`icon-btn ${playing ? 'active' : ''}`}
-                        onClick={playPronunciation}
-                        aria-label="Play pronunciation"
-                      >
-                        <SpeakerIcon active={playing} />
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      className={`icon-btn ${copied ? 'active' : ''}`}
-                      onClick={copyTranslation}
-                      aria-label="Copy translation"
-                      title={copied ? 'Copied' : 'Copy translation'}
-                    >
-                      <CopyIcon />
-                    </button>
-                  </div>
-                </div>
-                {data.context_explanation && (
-                  <p className="context-text">{data.context_explanation}</p>
-                )}
-                {data.usage_in_context && (
-                  <div className="context-usage">
-                    <span className="context-usage-label">In this context</span>
-                    <p className="context-text">{data.usage_in_context}</p>
-                  </div>
-                )}
-              </section>
+            {isPhraseLayout ? (
+              <PhraseResult
+                data={data}
+                playing={playing}
+                copied={copied}
+                sourceExpanded={sourceExpanded}
+                onToggleSourceExpand={() => setSourceExpanded((v) => !v)}
+                onPlaySource={() => playAudio(data.sourceAudioDataUrl, 'source')}
+                onPlayTranslation={() =>
+                  playAudio(data.translationAudioDataUrl, 'translation')
+                }
+                onCopySource={() =>
+                  copyText(
+                    data.sourceDisplay || data.sourceText || data.source_text,
+                    'source'
+                  )
+                }
+                onCopyTranslation={() => copyText(data.translation, 'translation')}
+              />
+            ) : (
+              <WordResult
+                data={data}
+                playing={playing === 'word'}
+                copied={copied === 'translation'}
+                onPlay={() =>
+                  playAudio(data.audioDataUrl || data.audioUs || data.audioUk, 'word')
+                }
+                onCopy={() => copyText(data.translation, 'translation')}
+              />
             )}
 
             {data.modelUsed && (

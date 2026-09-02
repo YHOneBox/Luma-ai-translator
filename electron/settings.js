@@ -9,11 +9,13 @@ If the text is already in {targetLanguage}, provide a clear definition and usage
 
 Return structured JSON with:
 - translation: the translation or definition in {targetLanguage}
+- source_text: the original text exactly as seen in the screenshot or selection (before translation)
 - example_sentence: a natural example sentence using the word/phrase in the source language
 - example_translation: translation of the example sentence into {targetLanguage}
 - context_explanation: general meaning and typical usage, in {targetLanguage}
 - usage_in_context: 2–4 sentences in {targetLanguage} explaining how the word/phrase is used in THIS specific screenshot or selected text — reference the actual surrounding context, domain, register, and why this translation fits
 - part_of_speech: part of speech abbreviation (e.g. n., v., adj.) when applicable, otherwise empty string
+- phonetic_ipa: IPA transcription for single English words (e.g. /ˈælɡəɹɪðəm/), otherwise empty string
 - base_word: the primary English dictionary headword (lowercase, single word or short phrase suitable for Cambridge Dictionary lookup)`;
 
 const DEFAULT_SETTINGS = {
