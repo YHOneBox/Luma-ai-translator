@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "ko",
+    "nativeName": "한국어",
+    "englishName": "Korean",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "Gemini 기반 화면 번역",
+    "by": "제작",
+    "settings": "설정",
+    "actions": {
+      "translateScreen": "화면 번역",
+      "selectRegion": "영역 선택",
+      "translateSelection": "선택 영역 번역",
+      "replaceSelection": "선택 영역 바꾸기",
+      "fixGrammar": "문법 교정"
+    },
+    "hints": {
+      "popup": "결과는 커서 근처 팝업에 표시됩니다.",
+      "workflows": "텍스트를 선택한 뒤 선택 조회, 번역 바꾸기 또는 문법 교정을 사용하세요. 앱을 떠나지 않고 붙여넣거나 결과를 볼 수 있습니다.",
+      "customize": "설정에서 단축키와 언어를 맞춤 설정할 수 있습니다.",
+      "tray": "이 창을 닫아도 Luma는 시스템 트레이에서 계속 실행됩니다."
+    },
+    "footerHotkeys": "단축키는 백그라운드에서도 유지됩니다"
+  },
+  "onboarding": {
+    "title": "언어 선택",
+    "subtitle": "Luma 인터페이스 언어를 선택하세요. 나중에 설정에서 변경할 수 있습니다.",
+    "continue": "계속"
+  },
+  "settings": {
+    "title": "설정",
+    "loading": "설정을 불러오는 중…",
+    "back": "뒤로",
+    "sections": {
+      "apiKeys": "API 키",
+      "appearance": "모양",
+      "basic": "기본",
+      "hotkeys": "단축키",
+      "models": "모델",
+      "systemPrompt": "시스템 프롬프트"
+    },
+    "apiKeys": {
+      "hintBefore": "여기에 Gemini API 키를 추가하세요. 키는 이 기기에만 저장되며 GitHub에 업로드되지 않습니다. 키는",
+      "hintLink": "Google AI Studio",
+      "hintAfter": "에서 받을 수 있습니다.",
+      "envNote": "로컬 .env 파일에서 키를 찾았습니다. 아래에 키를 추가하기 전까지 해당 키가 사용됩니다.",
+      "empty": "저장된 API 키가 아직 없습니다.",
+      "remove": "제거",
+      "labelOptional": "레이블(선택)",
+      "labelPlaceholder": "개인 / 업무",
+      "geminiKey": "Gemini API 키",
+      "cancel": "취소",
+      "saveKey": "키 저장",
+      "adding": "추가 중…",
+      "add": "+ API 키 추가"
+    },
+    "appearance": {
+      "uiLanguage": "앱 언어",
+      "uiLanguageHint": "Luma의 메뉴, 버튼, 설정에 사용되는 언어입니다."
+    },
+    "basic": {
+      "targetLanguage": "대상 언어",
+      "targetHint": "화면 / 선택 조회 결과에 사용되는 언어입니다({targetLanguage}).",
+      "replaceLanguage": "바꾸기 언어",
+      "replaceHint": "선택한 텍스트를 제자리에서 바꿀 때 사용하는 언어입니다(선택 영역 바꾸기 단축키)."
+    },
+    "hotkeys": {
+      "resetAll": "모든 단축키 초기화",
+      "hintBefore": "",
+      "hintStrong": "키 설정",
+      "hintAfter": "을 클릭한 다음 단축키를 누르세요. 자동으로 저장됩니다.",
+      "screen": "화면 번역",
+      "region": "영역 선택",
+      "selection": "선택 영역 번역",
+      "replace": "선택 영역 바꾸기",
+      "grammar": "문법 교정"
+    },
+    "models": {
+      "scan": "사용 가능한 모델 스캔",
+      "scanning": "스캔 중…",
+      "primary": "기본 모델",
+      "primaryPlaceholder": "스캔 후 선택",
+      "fallback": "대체 모델",
+      "fallbackHint": "기본 모델이 실패하면 순서대로 시도합니다.",
+      "fallbackEmpty": "대체 모델을 구성하려면 먼저 모델을 스캔하세요."
+    },
+    "systemPrompt": {
+      "reset": "기본값으로 재설정",
+      "hint": "모델이 스크린샷을 해석하는 방식을 맞춤 설정하세요. 자리 표시자로 {targetLanguage}를 사용하세요."
+    },
+    "actions": {
+      "resetAll": "모두 초기화",
+      "save": "설정 저장",
+      "saving": "저장 중…"
+    },
+    "status": {
+      "modelsFound": "사용 가능한 모델 {count}개를 찾았습니다.",
+      "saved": "설정이 저장되었습니다.",
+      "reset": "설정이 기본값으로 초기화되었습니다.",
+      "hotkeySaved": "단축키가 저장되었습니다.",
+      "hotkeyReset": "단축키가 초기화되어 저장되었습니다.",
+      "hotkeysReset": "모든 단축키가 기본값으로 초기화되었습니다.",
+      "enterApiKey": "추가하기 전에 API 키를 입력하세요.",
+      "apiKeyAdded": "API 키가 추가되었습니다.",
+      "apiKeyActive": "활성 API 키가 업데이트되었습니다.",
+      "apiKeyRemoved": "API 키가 제거되었습니다.",
+      "scanFailed": "모델 스캔에 실패했습니다.",
+      "saveFailed": "설정 저장에 실패했습니다.",
+      "hotkeySaveFailed": "단축키 저장에 실패했습니다.",
+      "hotkeyResetFailed": "단축키 초기화에 실패했습니다.",
+      "hotkeysResetFailed": "단축키 전체 초기화에 실패했습니다.",
+      "apiKeyAddFailed": "API 키 추가에 실패했습니다.",
+      "apiKeyActiveFailed": "활성 API 키 설정에 실패했습니다.",
+      "apiKeyRemoveFailed": "API 키 제거에 실패했습니다."
+    }
+  },
+  "hotkey": {
+    "empty": "\"키 설정\"을 클릭하여 지정",
+    "listening": "입력 대기 중…",
+    "listeningHint": "입력 대기 중… 키 조합을 누르세요(Esc로 취소)",
+    "setKey": "키 설정",
+    "reset": "초기화",
+    "alreadyDefault": "이미 기본값입니다",
+    "resetTitle": "기본값으로 되돌리고 저장",
+    "recordFailed": "단축키를 기록할 수 없습니다."
+  },
+  "popup": {
+    "translating": "번역 중…",
+    "error": "문제가 발생했습니다.",
+    "close": "닫기",
+    "playAudio": "오디오 재생",
+    "copyText": "텍스트 복사",
+    "copied": "복사됨",
+    "copy": "복사",
+    "showLess": "간략히",
+    "showAll": "모두 보기",
+    "playPronunciation": "발음 재생",
+    "copyTranslation": "번역 복사",
+    "inThisContext": "이 맥락에서"
+  },
+  "region": {
+    "hint": "드래그하여 영역 선택 · Esc로 취소",
+    "title": "영역 선택"
+  },
+  "tray": {
+    "open": "Luma 열기",
+    "translateScreen": "화면 번역",
+    "translateSelection": "선택 영역 번역",
+    "replaceSelection": "선택 영역 바꾸기",
+    "fixGrammar": "문법 교정",
+    "selectRegion": "영역 선택",
+    "quit": "종료"
+  },
+  "statusBar": {
+    "working": "작업 중…",
+    "replaceInProgress": "바꾸기 번역 진행 중…",
+    "translatingSelection": "선택 영역 번역 중…",
+    "pastingTranslation": "번역 붙여넣는 중…",
+    "replaceComplete": "바꾸기 완료",
+    "grammarInProgress": "문법 검사 진행 중…",
+    "checkingGrammar": "문법 확인 중…",
+    "pastingCorrection": "교정 내용 붙여넣는 중…",
+    "grammarComplete": "문법 교정 완료",
+    "noGrammarChanges": "문법 변경이 필요하지 않습니다",
+    "couldNotReadSelection": "선택한 텍스트를 읽을 수 없습니다. 텍스트를 강조 표시한 후 다시 시도하세요.",
+    "translationEmpty": "번역이 비어 있어 바꿀 수 없습니다.",
+    "replaceFailed": "선택한 텍스트를 바꿀 수 없습니다.",
+    "grammarEmpty": "문법 교정이 비어 있어 바꿀 수 없습니다.",
+    "grammarFailed": "선택한 텍스트를 교정할 수 없습니다."
+  },
+  "progress": {
+    "capturing": "화면 캡처 중…",
+    "loadingPronunciation": "발음 불러오는 중…",
+    "loadingAudio": "오디오 불러오는 중…",
+    "translationFailed": "번역에 실패했습니다.",
+    "couldNotReadSelection": "선택한 텍스트를 읽을 수 없습니다."
+  },
+  "modelSelect": {
+    "placeholder": "모델 선택",
+    "empty": "먼저 모델을 스캔하세요"
+  }
+}

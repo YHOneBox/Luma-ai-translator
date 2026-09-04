@@ -1,8 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import ModelSelect from './ModelSelect';
 import HotkeyInput from './HotkeyInput';
+import { useI18n } from './i18n';
 
 export default function Settings({ onBack }) {
+  const { t, locales, setLocale, locale } = useI18n();
   const [settings, setSettings] = useState(null);
   const [defaults, setDefaults] = useState(null);
   const [models, setModels] = useState([]);
@@ -40,9 +42,9 @@ export default function Settings({ onBack }) {
     try {
       const list = await window.electronAPI.scanModels();
       setModels(list);
-      setStatus(`Found ${list.length} available model${list.length === 1 ? '' : 's'}.`);
+      setStatus(t('settings.status.modelsFound', { count: list.length }));
     } catch (err) {
-      setStatus(err.message || 'Failed to scan models.');
+      setStatus(err.message || t('settings.status.scanFailed'));
     } finally {
       setScanning(false);
     }
@@ -78,9 +80,9 @@ export default function Settings({ onBack }) {
     try {
       const saved = await window.electronAPI.saveSettings(settings);
       setSettings(saved);
-      setStatus('Settings saved.');
+      setStatus(t('settings.status.saved'));
     } catch (err) {
-      setStatus(err.message || 'Failed to save settings.');
+      setStatus(err.message || t('settings.status.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -95,7 +97,10 @@ export default function Settings({ onBack }) {
   const resetAll = async () => {
     const reset = await window.electronAPI.resetSettings();
     setSettings(reset);
-    setStatus('Settings reset to defaults.');
+    if (reset.uiLocale) {
+      await setLocale(reset.uiLocale, { markChosen: true });
+    }
+    setStatus(t('settings.status.reset'));
   };
 
   const saveHotkey = async (key, value) => {
@@ -107,9 +112,9 @@ export default function Settings({ onBack }) {
     try {
       const saved = await window.electronAPI.saveSettings(next);
       setSettings(saved);
-      setStatus('Hotkey saved.');
+      setStatus(t('settings.status.hotkeySaved'));
     } catch (err) {
-      setStatus(err.message || 'Failed to save hotkey.');
+      setStatus(err.message || t('settings.status.hotkeySaveFailed'));
     }
   };
 
@@ -122,9 +127,9 @@ export default function Settings({ onBack }) {
     try {
       const saved = await window.electronAPI.saveSettings(next);
       setSettings(saved);
-      setStatus('Hotkey reset and saved.');
+      setStatus(t('settings.status.hotkeyReset'));
     } catch (err) {
-      setStatus(err.message || 'Failed to reset hotkey.');
+      setStatus(err.message || t('settings.status.hotkeyResetFailed'));
     }
   };
 
@@ -143,15 +148,22 @@ export default function Settings({ onBack }) {
     try {
       const saved = await window.electronAPI.saveSettings(next);
       setSettings(saved);
-      setStatus('All hotkeys reset to defaults.');
+      setStatus(t('settings.status.hotkeysReset'));
     } catch (err) {
-      setStatus(err.message || 'Failed to reset hotkeys.');
+      setStatus(err.message || t('settings.status.hotkeysResetFailed'));
     }
+  };
+
+  const changeUiLanguage = async (code) => {
+    updateField('uiLocale', code);
+    await setLocale(code, { markChosen: true });
+    const current = await window.electronAPI.getSettings();
+    setSettings(current);
   };
 
   const addApiKey = async () => {
     if (!newKeyValue.trim()) {
-      setStatus('Enter an API key before adding.');
+      setStatus(t('settings.status.enterApiKey'));
       return;
     }
 
@@ -166,9 +178,9 @@ export default function Settings({ onBack }) {
       setNewKeyLabel('');
       setNewKeyValue('');
       setShowAddKeyForm(false);
-      setStatus('API key added.');
+      setStatus(t('settings.status.apiKeyAdded'));
     } catch (err) {
-      setStatus(err.message || 'Failed to add API key.');
+      setStatus(err.message || t('settings.status.apiKeyAddFailed'));
     } finally {
       setAddingKey(false);
     }
@@ -185,9 +197,9 @@ export default function Settings({ onBack }) {
     try {
       const saved = await window.electronAPI.setActiveApiKey(id);
       setSettings(saved);
-      setStatus('Active API key updated.');
+      setStatus(t('settings.status.apiKeyActive'));
     } catch (err) {
-      setStatus(err.message || 'Failed to set active API key.');
+      setStatus(err.message || t('settings.status.apiKeyActiveFailed'));
     }
   };
 
@@ -196,9 +208,9 @@ export default function Settings({ onBack }) {
     try {
       const saved = await window.electronAPI.removeApiKey(id);
       setSettings(saved);
-      setStatus('API key removed.');
+      setStatus(t('settings.status.apiKeyRemoved'));
     } catch (err) {
-      setStatus(err.message || 'Failed to remove API key.');
+      setStatus(err.message || t('settings.status.apiKeyRemoveFailed'));
     }
   };
 
@@ -207,7 +219,7 @@ export default function Settings({ onBack }) {
       <div className="settings-page">
         <div className="loading-state">
           <div className="spinner" />
-          <p>Loading settings...</p>
+          <p>{t('settings.loading')}</p>
         </div>
       </div>
     );
@@ -224,18 +236,35 @@ export default function Settings({ onBack }) {
   return (
     <div className="settings-page">
       <header className="settings-header">
-        <button className="back-btn" onClick={onBack} aria-label="Back">
+        <button className="back-btn" onClick={onBack} aria-label={t('settings.back')}>
           ←
         </button>
-        <h1>Settings</h1>
+        <h1>{t('settings.title')}</h1>
       </header>
 
       <div className="settings-body">
         <section className="settings-section">
-          <h2>API Keys</h2>
+          <h2>{t('settings.sections.appearance')}</h2>
+          <label className="field">
+            <span>{t('settings.appearance.uiLanguage')}</span>
+            <select
+              value={settings.uiLocale || locale || 'en'}
+              onChange={(e) => changeUiLanguage(e.target.value)}
+            >
+              {(locales || []).map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.nativeName} — {item.englishName}
+                </option>
+              ))}
+            </select>
+            <small>{t('settings.appearance.uiLanguageHint')}</small>
+          </label>
+        </section>
+
+        <section className="settings-section">
+          <h2>{t('settings.sections.apiKeys')}</h2>
           <small className="settings-section-hint">
-            Add your Gemini API key here. Keys are stored locally on this device and never
-            uploaded to GitHub. Get a key from{' '}
+            {t('settings.apiKeys.hintBefore')}{' '}
             <a
               href="#"
               onClick={(e) => {
@@ -243,15 +272,14 @@ export default function Settings({ onBack }) {
                 window.electronAPI?.openDictionary('https://aistudio.google.com/apikey');
               }}
             >
-              Google AI Studio
+              {t('settings.apiKeys.hintLink')}
             </a>
-            .
+            {t('settings.apiKeys.hintAfter')}
           </small>
 
           {settings.hasEnvApiKey && (settings.apiKeys?.length ?? 0) === 0 && (
             <p className="settings-note api-key-env-note">
-              A key was found in your local <code>.env</code> file and will be used until you
-              add a key below.
+              {t('settings.apiKeys.envNote')}
             </p>
           )}
 
@@ -276,29 +304,29 @@ export default function Settings({ onBack }) {
                     className="btn-secondary small api-key-delete"
                     onClick={() => deleteApiKey(entry.id)}
                   >
-                    Remove
+                    {t('settings.apiKeys.remove')}
                   </button>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="settings-note">No saved API keys yet.</p>
+            <p className="settings-note">{t('settings.apiKeys.empty')}</p>
           )}
 
           {showAddKeyForm ? (
             <div className="api-key-add">
               <label className="field">
-                <span>Label (optional)</span>
+                <span>{t('settings.apiKeys.labelOptional')}</span>
                 <input
                   type="text"
                   value={newKeyLabel}
                   onChange={(e) => setNewKeyLabel(e.target.value)}
-                  placeholder="Personal / Work"
+                  placeholder={t('settings.apiKeys.labelPlaceholder')}
                   autoFocus
                 />
               </label>
               <label className="field">
-                <span>Gemini API key</span>
+                <span>{t('settings.apiKeys.geminiKey')}</span>
                 <input
                   type="password"
                   value={newKeyValue}
@@ -314,7 +342,7 @@ export default function Settings({ onBack }) {
                   onClick={cancelAddApiKey}
                   disabled={addingKey}
                 >
-                  Cancel
+                  {t('settings.apiKeys.cancel')}
                 </button>
                 <button
                   type="button"
@@ -322,7 +350,7 @@ export default function Settings({ onBack }) {
                   onClick={addApiKey}
                   disabled={addingKey}
                 >
-                  {addingKey ? 'Adding...' : 'Save key'}
+                  {addingKey ? t('settings.apiKeys.adding') : t('settings.apiKeys.saveKey')}
                 </button>
               </div>
             </div>
@@ -332,86 +360,84 @@ export default function Settings({ onBack }) {
               className="btn-secondary small"
               onClick={() => setShowAddKeyForm(true)}
             >
-              + Add API Key
+              {t('settings.apiKeys.add')}
             </button>
           )}
         </section>
 
         <section className="settings-section">
-          <h2>Basic</h2>
+          <h2>{t('settings.sections.basic')}</h2>
 
           <label className="field">
-            <span>Target language</span>
+            <span>{t('settings.basic.targetLanguage')}</span>
             <input
               type="text"
               value={settings.targetLanguage}
               onChange={(e) => updateField('targetLanguage', e.target.value)}
               placeholder="Chinese (Traditional)"
             />
-            <small>
-              Language for screen / selection lookup results via {'{targetLanguage}'}.
-            </small>
+            <small>{t('settings.basic.targetHint')}</small>
           </label>
 
           <label className="field">
-            <span>Replace language</span>
+            <span>{t('settings.basic.replaceLanguage')}</span>
             <input
               type="text"
               value={settings.replaceLanguage || ''}
               onChange={(e) => updateField('replaceLanguage', e.target.value)}
               placeholder="English"
             />
-            <small>
-              Language used when replacing selected text in place (Replace Selection hotkey).
-            </small>
+            <small>{t('settings.basic.replaceHint')}</small>
           </label>
         </section>
 
         <section className="settings-section">
           <div className="section-row">
-            <h2>Hotkeys</h2>
+            <h2>{t('settings.sections.hotkeys')}</h2>
             <button
               type="button"
               className="btn-secondary small"
               onClick={resetAllHotkeys}
             >
-              Reset all hotkeys
+              {t('settings.hotkeys.resetAll')}
             </button>
           </div>
           <small className="settings-section-hint">
-            Click <strong>Set key</strong>, then press your shortcut. Saves automatically.
+            {t('settings.hotkeys.hintBefore')}{' '}
+            <strong>{t('settings.hotkeys.hintStrong')}</strong>
+            {t('settings.hotkeys.hintAfter')}
           </small>
 
           <HotkeyInput
-            label="Translate screen"
+            label={t('settings.hotkeys.screen')}
             value={settings.hotkeyScreen}
             defaultValue={defaults?.hotkeyScreen}
             onChange={(v) => saveHotkey('hotkeyScreen', v)}
             onReset={() => resetHotkey('hotkeyScreen', defaults?.hotkeyScreen)}
           />
           <HotkeyInput
-            label="Select region"
+            label={t('settings.hotkeys.region')}
             value={settings.hotkeyRegion}
             defaultValue={defaults?.hotkeyRegion}
             onChange={(v) => saveHotkey('hotkeyRegion', v)}
             onReset={() => resetHotkey('hotkeyRegion', defaults?.hotkeyRegion)}
           />
           <HotkeyInput
-            label="Translate selection"
+            label={t('settings.hotkeys.selection')}
             value={settings.hotkeySelection}
             defaultValue={defaults?.hotkeySelection}
             onChange={(v) => saveHotkey('hotkeySelection', v)}
             onReset={() => resetHotkey('hotkeySelection', defaults?.hotkeySelection)}
           />
           <HotkeyInput
-            label="Replace selection"
+            label={t('settings.hotkeys.replace')}
             value={settings.hotkeyReplace}
             defaultValue={defaults?.hotkeyReplace}
             onChange={(v) => saveHotkey('hotkeyReplace', v)}
             onReset={() => resetHotkey('hotkeyReplace', defaults?.hotkeyReplace)}
           />
           <HotkeyInput
-            label="Fix grammar"
+            label={t('settings.hotkeys.grammar')}
             value={settings.hotkeyGrammar}
             defaultValue={defaults?.hotkeyGrammar}
             onChange={(v) => saveHotkey('hotkeyGrammar', v)}
@@ -421,32 +447,32 @@ export default function Settings({ onBack }) {
 
         <section className="settings-section">
           <div className="section-row">
-            <h2>Models</h2>
+            <h2>{t('settings.sections.models')}</h2>
             <button
               className="btn-secondary small"
               onClick={scanModels}
               disabled={scanning}
             >
-              {scanning ? 'Scanning...' : 'Scan Available Models'}
+              {scanning ? t('settings.models.scanning') : t('settings.models.scan')}
             </button>
           </div>
 
           <label className="field">
-            <span>Primary model</span>
+            <span>{t('settings.models.primary')}</span>
             <ModelSelect
               value={settings.primaryModel}
               options={modelOptions}
               onChange={(id) => updateField('primaryModel', id)}
-              placeholder="Scan models to choose"
+              placeholder={t('settings.models.primaryPlaceholder')}
             />
           </label>
 
           <div className="field">
-            <span>Fallback models</span>
-            <small>Tried in order if the primary model fails.</small>
+            <span>{t('settings.models.fallback')}</span>
+            <small>{t('settings.models.fallbackHint')}</small>
 
             {modelOptions.length === 0 ? (
-              <p className="settings-note">Scan models to configure fallbacks.</p>
+              <p className="settings-note">{t('settings.models.fallbackEmpty')}</p>
             ) : (
               <ul className="fallback-list">
                 {modelOptions
@@ -494,9 +520,9 @@ export default function Settings({ onBack }) {
 
         <section className="settings-section">
           <div className="section-row">
-            <h2>System Prompt</h2>
+            <h2>{t('settings.sections.systemPrompt')}</h2>
             <button className="btn-secondary small" onClick={resetPrompt}>
-              Reset to Default
+              {t('settings.systemPrompt.reset')}
             </button>
           </div>
 
@@ -507,10 +533,7 @@ export default function Settings({ onBack }) {
               onChange={(e) => updateField('systemPrompt', e.target.value)}
               spellCheck={false}
             />
-            <small>
-              Customize how the model interprets screenshots. Use {'{targetLanguage}'} as a
-              placeholder.
-            </small>
+            <small>{t('settings.systemPrompt.hint')}</small>
           </label>
         </section>
       </div>
@@ -519,10 +542,10 @@ export default function Settings({ onBack }) {
         {status && <p className="settings-status">{status}</p>}
         <div className="settings-actions">
           <button className="btn-secondary" onClick={resetAll}>
-            Reset All
+            {t('settings.actions.resetAll')}
           </button>
           <button className="btn-primary" onClick={save} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Settings'}
+            {saving ? t('settings.actions.saving') : t('settings.actions.save')}
           </button>
         </div>
       </footer>

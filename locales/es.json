@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "es",
+    "nativeName": "Español",
+    "englishName": "Spanish",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "Traducción de pantalla impulsada por Gemini",
+    "by": "por",
+    "settings": "Ajustes",
+    "actions": {
+      "translateScreen": "Traducir pantalla",
+      "selectRegion": "Seleccionar región",
+      "translateSelection": "Traducir selección",
+      "replaceSelection": "Reemplazar selección",
+      "fixGrammar": "Corregir gramática"
+    },
+    "hints": {
+      "popup": "Los resultados aparecen en una ventana emergente cerca del cursor.",
+      "workflows": "Resalta texto y luego usa la consulta de selección, el reemplazo por traducción o la corrección gramatical: cada acción pega o muestra resultados sin salir de tu aplicación.",
+      "customize": "Personaliza atajos e idiomas en Ajustes.",
+      "tray": "Al cerrar esta ventana, Luma sigue activo en la bandeja del sistema."
+    },
+    "footerHotkeys": "Los atajos permanecen activos en segundo plano"
+  },
+  "onboarding": {
+    "title": "Elige tu idioma",
+    "subtitle": "Selecciona el idioma de la interfaz de Luma. Puedes cambiarlo más tarde en Ajustes.",
+    "continue": "Continuar"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "loading": "Cargando ajustes…",
+    "back": "Volver",
+    "sections": {
+      "apiKeys": "Claves API",
+      "appearance": "Apariencia",
+      "basic": "Básico",
+      "hotkeys": "Atajos",
+      "models": "Modelos",
+      "systemPrompt": "Prompt del sistema"
+    },
+    "apiKeys": {
+      "hintBefore": "Añade aquí tu clave API de Gemini. Las claves se guardan localmente en este dispositivo y nunca se suben a GitHub. Obtén una clave en",
+      "hintLink": "Google AI Studio",
+      "hintAfter": ".",
+      "envNote": "Se encontró una clave en tu archivo .env local y se usará hasta que añadas una clave abajo.",
+      "empty": "Aún no hay claves API guardadas.",
+      "remove": "Eliminar",
+      "labelOptional": "Etiqueta (opcional)",
+      "labelPlaceholder": "Personal / Trabajo",
+      "geminiKey": "Clave API de Gemini",
+      "cancel": "Cancelar",
+      "saveKey": "Guardar clave",
+      "adding": "Añadiendo…",
+      "add": "+ Añadir clave API"
+    },
+    "appearance": {
+      "uiLanguage": "Idioma de la aplicación",
+      "uiLanguageHint": "Idioma de menús, botones y ajustes en Luma."
+    },
+    "basic": {
+      "targetLanguage": "Idioma de destino",
+      "targetHint": "Idioma de los resultados de consulta de pantalla / selección mediante {targetLanguage}.",
+      "replaceLanguage": "Idioma de reemplazo",
+      "replaceHint": "Idioma usado al reemplazar el texto seleccionado en su lugar (atajo Reemplazar selección)."
+    },
+    "hotkeys": {
+      "resetAll": "Restablecer todos los atajos",
+      "hintBefore": "Haz clic en",
+      "hintStrong": "Definir tecla",
+      "hintAfter": " y luego pulsa tu atajo. Se guarda automáticamente.",
+      "screen": "Traducir pantalla",
+      "region": "Seleccionar región",
+      "selection": "Traducir selección",
+      "replace": "Reemplazar selección",
+      "grammar": "Corregir gramática"
+    },
+    "models": {
+      "scan": "Escanear modelos disponibles",
+      "scanning": "Escaneando…",
+      "primary": "Modelo principal",
+      "primaryPlaceholder": "Escanea modelos para elegir",
+      "fallback": "Modelos de respaldo",
+      "fallbackHint": "Se prueban en orden si falla el modelo principal.",
+      "fallbackEmpty": "Escanea modelos para configurar los de respaldo."
+    },
+    "systemPrompt": {
+      "reset": "Restablecer valores predeterminados",
+      "hint": "Personaliza cómo interpreta el modelo las capturas de pantalla. Usa {targetLanguage} como marcador de posición."
+    },
+    "actions": {
+      "resetAll": "Restablecer todo",
+      "save": "Guardar ajustes",
+      "saving": "Guardando…"
+    },
+    "status": {
+      "modelsFound": "Se encontraron {count} modelo(s) disponible(s).",
+      "saved": "Ajustes guardados.",
+      "reset": "Ajustes restablecidos a los valores predeterminados.",
+      "hotkeySaved": "Atajo guardado.",
+      "hotkeyReset": "Atajo restablecido y guardado.",
+      "hotkeysReset": "Todos los atajos se restablecieron a los valores predeterminados.",
+      "enterApiKey": "Introduce una clave API antes de añadirla.",
+      "apiKeyAdded": "Clave API añadida.",
+      "apiKeyActive": "Clave API activa actualizada.",
+      "apiKeyRemoved": "Clave API eliminada.",
+      "scanFailed": "Error al escanear modelos.",
+      "saveFailed": "Error al guardar los ajustes.",
+      "hotkeySaveFailed": "Error al guardar el atajo.",
+      "hotkeyResetFailed": "Error al restablecer el atajo.",
+      "hotkeysResetFailed": "Error al restablecer los atajos.",
+      "apiKeyAddFailed": "Error al añadir la clave API.",
+      "apiKeyActiveFailed": "Error al establecer la clave API activa.",
+      "apiKeyRemoveFailed": "Error al eliminar la clave API."
+    }
+  },
+  "hotkey": {
+    "empty": "Haz clic en \"Definir tecla\" para asignar",
+    "listening": "Escuchando…",
+    "listeningHint": "Escuchando… pulsa la combinación de teclas (Esc para cancelar)",
+    "setKey": "Definir tecla",
+    "reset": "Restablecer",
+    "alreadyDefault": "Ya usa el valor predeterminado",
+    "resetTitle": "Restablecer al valor predeterminado y guardar",
+    "recordFailed": "No se pudo registrar el atajo."
+  },
+  "popup": {
+    "translating": "Traduciendo…",
+    "error": "Algo salió mal.",
+    "close": "Cerrar",
+    "playAudio": "Reproducir audio",
+    "copyText": "Copiar texto",
+    "copied": "Copiado",
+    "copy": "Copiar",
+    "showLess": "Mostrar menos",
+    "showAll": "Mostrar todo",
+    "playPronunciation": "Reproducir pronunciación",
+    "copyTranslation": "Copiar traducción",
+    "inThisContext": "En este contexto"
+  },
+  "region": {
+    "hint": "Arrastra para seleccionar una región · Esc para cancelar",
+    "title": "Seleccionar región"
+  },
+  "tray": {
+    "open": "Abrir Luma",
+    "translateScreen": "Traducir pantalla",
+    "translateSelection": "Traducir selección",
+    "replaceSelection": "Reemplazar selección",
+    "fixGrammar": "Corregir gramática",
+    "selectRegion": "Seleccionar región",
+    "quit": "Salir"
+  },
+  "statusBar": {
+    "working": "Trabajando…",
+    "replaceInProgress": "Reemplazo por traducción en curso…",
+    "translatingSelection": "Traduciendo la selección…",
+    "pastingTranslation": "Pegando la traducción…",
+    "replaceComplete": "Reemplazo completado",
+    "grammarInProgress": "Corrección gramatical en curso…",
+    "checkingGrammar": "Comprobando la gramática…",
+    "pastingCorrection": "Pegando la corrección…",
+    "grammarComplete": "Corrección gramatical completada",
+    "noGrammarChanges": "No se necesitan cambios gramaticales",
+    "couldNotReadSelection": "No se pudo leer el texto seleccionado. Resalta texto e inténtalo de nuevo.",
+    "translationEmpty": "La traducción estaba vacía, así que no se pudo reemplazar nada.",
+    "replaceFailed": "No se pudo reemplazar el texto seleccionado.",
+    "grammarEmpty": "La corrección gramatical estaba vacía, así que no se pudo reemplazar nada.",
+    "grammarFailed": "No se pudo corregir el texto seleccionado."
+  },
+  "progress": {
+    "capturing": "Capturando la pantalla…",
+    "loadingPronunciation": "Cargando la pronunciación…",
+    "loadingAudio": "Cargando el audio…",
+    "translationFailed": "Error en la traducción.",
+    "couldNotReadSelection": "No se pudo leer el texto seleccionado."
+  },
+  "modelSelect": {
+    "placeholder": "Seleccionar un modelo",
+    "empty": "Escanea primero los modelos"
+  }
+}

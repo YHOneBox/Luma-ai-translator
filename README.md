@@ -318,6 +318,7 @@ Open **Settings** from the gear icon on the main window.
 | Setting | Description |
 |---------|-------------|
 | **API Keys** | Add, remove, and switch between Gemini API keys (stored locally) |
+| **App language** | Interface language (menus, buttons, settings). Chosen on first launch; changeable anytime |
 | **Target language** | Language Gemini translates into (default: Chinese (Traditional)) |
 | **Replace language** | Language used when replacing selected text in place (default: English) |
 | **Primary model** | First Gemini model to try |
@@ -420,7 +421,7 @@ End users can run Luma **without installing Node.js** — download the portable 
 
 | Platform | File | How to run |
 |----------|------|------------|
-| **Windows** | `Luma-*-Portable.exe` | Double-click (no install) |
+| **Windows** | `Luma-*-win-Portable.exe` | Double-click (no install) |
 | **macOS** | `Luma-*-mac-*.dmg` or `.zip` | Open DMG, drag to Applications; or unzip |
 | **Linux** | `Luma-*-linux-*.AppImage` or `.zip` | `chmod +x` AppImage, then run; or unzip |
 
@@ -457,7 +458,7 @@ npm run dist:portable
 Output:
 
 ```
-release/Luma-1.0.5-Portable.exe
+release/Luma-1.0.5-win-Portable.exe
 ```
 
 Other build commands:
@@ -556,7 +557,7 @@ git push origin v1.0.0
 
 1. Wait for the **Build Release** workflow to finish (Actions tab — three build jobs + publish).
 2. Open **Releases** — assets should include `.exe`, `.dmg`, `.AppImage`, and `.zip` files.
-3. Or create a release manually and attach `release/Luma-*-Portable.exe` from a local `npm run dist:portable` build.
+3. Or create a release manually and attach `release/Luma-*-win-Portable.exe` from a local `npm run dist:portable` build.
 
 **Release description** — example:
 

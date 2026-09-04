@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "hi",
+    "nativeName": "हिन्दी",
+    "englishName": "Hindi",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "Gemini द्वारा संचालित स्क्रीन अनुवाद",
+    "by": "द्वारा",
+    "settings": "सेटिंग्स",
+    "actions": {
+      "translateScreen": "स्क्रीन अनुवाद करें",
+      "selectRegion": "क्षेत्र चुनें",
+      "translateSelection": "चयन का अनुवाद करें",
+      "replaceSelection": "चयन बदलें",
+      "fixGrammar": "व्याकरण सुधारें"
+    },
+    "hints": {
+      "popup": "परिणाम कर्सर के पास पॉपअप में दिखते हैं।",
+      "workflows": "टेक्स्ट हाइलाइट करें, फिर चयन खोज, अनुवाद से बदलना, या व्याकरण सुधार का उपयोग करें — प्रत्येक क्रिया आपके ऐप से बाहर निकले बिना परिणाम पेस्ट या दिखाती है।",
+      "customize": "सेटिंग्स में हॉटकी और भाषाएँ अनुकूलित करें।",
+      "tray": "इस विंडो को बंद करने पर भी Luma सिस्टम ट्रे में चलता रहता है।"
+    },
+    "footerHotkeys": "हॉटकी पृष्ठभूमि में सक्रिय रहती हैं"
+  },
+  "onboarding": {
+    "title": "अपनी भाषा चुनें",
+    "subtitle": "Luma इंटरफ़ेस के लिए भाषा चुनें। आप इसे बाद में सेटिंग्स में बदल सकते हैं।",
+    "continue": "जारी रखें"
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "loading": "सेटिंग्स लोड हो रही हैं…",
+    "back": "वापस",
+    "sections": {
+      "apiKeys": "API कुंजियाँ",
+      "appearance": "दिखावट",
+      "basic": "मूल",
+      "hotkeys": "हॉटकी",
+      "models": "मॉडल",
+      "systemPrompt": "सिस्टम प्रॉम्प्ट"
+    },
+    "apiKeys": {
+      "hintBefore": "यहाँ अपनी Gemini API कुंजी जोड़ें। कुंजियाँ इस डिवाइस पर स्थानीय रूप से संग्रहीत होती हैं और कभी GitHub पर अपलोड नहीं होतीं। कुंजी प्राप्त करें",
+      "hintLink": "Google AI Studio",
+      "hintAfter": " से।",
+      "envNote": "आपकी स्थानीय .env फ़ाइल में एक कुंजी मिली है और नीचे कुंजी जोड़ने तक उसी का उपयोग होगा।",
+      "empty": "अभी कोई सहेजी गई API कुंजी नहीं है।",
+      "remove": "हटाएँ",
+      "labelOptional": "लेबल (वैकल्पिक)",
+      "labelPlaceholder": "व्यक्तिगत / कार्य",
+      "geminiKey": "Gemini API कुंजी",
+      "cancel": "रद्द करें",
+      "saveKey": "कुंजी सहेजें",
+      "adding": "जोड़ा जा रहा है…",
+      "add": "+ API कुंजी जोड़ें"
+    },
+    "appearance": {
+      "uiLanguage": "ऐप भाषा",
+      "uiLanguageHint": "Luma में मेनू, बटन और सेटिंग्स की भाषा।"
+    },
+    "basic": {
+      "targetLanguage": "लक्ष्य भाषा",
+      "targetHint": "स्क्रीन / चयन खोज परिणामों की भाषा {targetLanguage} के माध्यम से।",
+      "replaceLanguage": "प्रतिस्थापन भाषा",
+      "replaceHint": "चयनित टेक्स्ट को उसी स्थान पर बदलते समय उपयोग की जाने वाली भाषा (चयन बदलें हॉटकी)।"
+    },
+    "hotkeys": {
+      "resetAll": "सभी हॉटकी रीसेट करें",
+      "hintBefore": "",
+      "hintStrong": "कुंजी सेट करें",
+      "hintAfter": " पर क्लिक करें, फिर अपना शॉर्टकट दबाएँ। स्वतः सहेजा जाता है।",
+      "screen": "स्क्रीन अनुवाद करें",
+      "region": "क्षेत्र चुनें",
+      "selection": "चयन का अनुवाद करें",
+      "replace": "चयन बदलें",
+      "grammar": "व्याकरण सुधारें"
+    },
+    "models": {
+      "scan": "उपलब्ध मॉडल स्कैन करें",
+      "scanning": "स्कैन हो रहा है…",
+      "primary": "प्राथमिक मॉडल",
+      "primaryPlaceholder": "चुनने के लिए मॉडल स्कैन करें",
+      "fallback": "फ़ॉलबैक मॉडल",
+      "fallbackHint": "प्राथमिक मॉडल विफल होने पर क्रम में आज़माए जाते हैं।",
+      "fallbackEmpty": "फ़ॉलबैक कॉन्फ़िगर करने के लिए मॉडल स्कैन करें।"
+    },
+    "systemPrompt": {
+      "reset": "डिफ़ॉल्ट पर रीसेट करें",
+      "hint": "मॉडल स्क्रीनशॉट की व्याख्या कैसे करे, इसे अनुकूलित करें। प्लेसहोल्डर के रूप में {targetLanguage} का उपयोग करें।"
+    },
+    "actions": {
+      "resetAll": "सभी रीसेट करें",
+      "save": "सेटिंग्स सहेजें",
+      "saving": "सहेजा जा रहा है…"
+    },
+    "status": {
+      "modelsFound": "{count} उपलब्ध मॉडल मिले।",
+      "saved": "सेटिंग्स सहेज दी गईं।",
+      "reset": "सेटिंग्स डिफ़ॉल्ट पर रीसेट हो गईं।",
+      "hotkeySaved": "हॉटकी सहेज दी गई।",
+      "hotkeyReset": "हॉटकी रीसेट होकर सहेज दी गई।",
+      "hotkeysReset": "सभी हॉटकी डिफ़ॉल्ट पर रीसेट हो गईं।",
+      "enterApiKey": "जोड़ने से पहले API कुंजी दर्ज करें।",
+      "apiKeyAdded": "API कुंजी जोड़ दी गई।",
+      "apiKeyActive": "सक्रिय API कुंजी अपडेट हो गई।",
+      "apiKeyRemoved": "API कुंजी हटा दी गई।",
+      "scanFailed": "मॉडल स्कैन करने में विफल।",
+      "saveFailed": "सेटिंग्स सहेजने में विफल।",
+      "hotkeySaveFailed": "हॉटकी सहेजने में विफल।",
+      "hotkeyResetFailed": "हॉटकी रीसेट करने में विफल।",
+      "hotkeysResetFailed": "हॉटकी रीसेट करने में विफल।",
+      "apiKeyAddFailed": "API कुंजी जोड़ने में विफल।",
+      "apiKeyActiveFailed": "सक्रिय API कुंजी सेट करने में विफल।",
+      "apiKeyRemoveFailed": "API कुंजी हटाने में विफल।"
+    }
+  },
+  "hotkey": {
+    "empty": "असाइन करने के लिए \"कुंजी सेट करें\" पर क्लिक करें",
+    "listening": "सुन रहा है…",
+    "listeningHint": "सुन रहा है… कुंजी संयोजन दबाएँ (रद्द करने के लिए Esc)",
+    "setKey": "कुंजी सेट करें",
+    "reset": "रीसेट",
+    "alreadyDefault": "पहले से डिफ़ॉल्ट उपयोग हो रहा है",
+    "resetTitle": "डिफ़ॉल्ट पर रीसेट करें और सहेजें",
+    "recordFailed": "हॉटकी रिकॉर्ड नहीं हो सकी।"
+  },
+  "popup": {
+    "translating": "अनुवाद हो रहा है…",
+    "error": "कुछ गलत हो गया।",
+    "close": "बंद करें",
+    "playAudio": "ऑडियो चलाएँ",
+    "copyText": "टेक्स्ट कॉपी करें",
+    "copied": "कॉपी हो गया",
+    "copy": "कॉपी",
+    "showLess": "कम दिखाएँ",
+    "showAll": "सब दिखाएँ",
+    "playPronunciation": "उच्चारण चलाएँ",
+    "copyTranslation": "अनुवाद कॉपी करें",
+    "inThisContext": "इस संदर्भ में"
+  },
+  "region": {
+    "hint": "क्षेत्र चुनने के लिए खींचें · रद्द करने के लिए Esc",
+    "title": "क्षेत्र चुनें"
+  },
+  "tray": {
+    "open": "Luma खोलें",
+    "translateScreen": "स्क्रीन अनुवाद करें",
+    "translateSelection": "चयन का अनुवाद करें",
+    "replaceSelection": "चयन बदलें",
+    "fixGrammar": "व्याकरण सुधारें",
+    "selectRegion": "क्षेत्र चुनें",
+    "quit": "बाहर निकलें"
+  },
+  "statusBar": {
+    "working": "काम जारी है…",
+    "replaceInProgress": "अनुवाद से बदलना जारी…",
+    "translatingSelection": "चयन का अनुवाद हो रहा है…",
+    "pastingTranslation": "अनुवाद पेस्ट हो रहा है…",
+    "replaceComplete": "बदलना पूरा",
+    "grammarInProgress": "व्याकरण जाँच जारी…",
+    "checkingGrammar": "व्याकरण जाँचा जा रहा है…",
+    "pastingCorrection": "सुधार पेस्ट हो रहा है…",
+    "grammarComplete": "व्याकरण सुधार पूरा",
+    "noGrammarChanges": "व्याकरण में कोई बदलाव आवश्यक नहीं",
+    "couldNotReadSelection": "चयनित टेक्स्ट पढ़ा नहीं जा सका। टेक्स्ट हाइलाइट करके फिर कोशिश करें।",
+    "translationEmpty": "अनुवाद खाली था, इसलिए कुछ बदला नहीं जा सका।",
+    "replaceFailed": "चयनित टेक्स्ट बदला नहीं जा सका।",
+    "grammarEmpty": "व्याकरण सुधार खाली था, इसलिए कुछ बदला नहीं जा सका।",
+    "grammarFailed": "चयनित टेक्स्ट सुधारा नहीं जा सका।"
+  },
+  "progress": {
+    "capturing": "स्क्रीन कैप्चर हो रही है…",
+    "loadingPronunciation": "उच्चारण लोड हो रहा है…",
+    "loadingAudio": "ऑडियो लोड हो रहा है…",
+    "translationFailed": "अनुवाद विफल।",
+    "couldNotReadSelection": "चयनित टेक्स्ट पढ़ा नहीं जा सका।"
+  },
+  "modelSelect": {
+    "placeholder": "एक मॉडल चुनें",
+    "empty": "पहले मॉडल स्कैन करें"
+  }
+}

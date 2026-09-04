@@ -1,10 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import Settings from './Settings';
+import LanguageOnboarding from './LanguageOnboarding';
 import { formatDisplay } from './HotkeyInput';
+import { useI18n } from './i18n';
 
 export default function MainApp() {
+  const { t, ready } = useI18n();
   const [view, setView] = useState('home');
   const [appVersion, setAppVersion] = useState('');
+  const [needsOnboarding, setNeedsOnboarding] = useState(null);
   const [hotkeys, setHotkeys] = useState({
     screen: 'Alt + T',
     region: 'Alt + C',
@@ -21,6 +25,7 @@ export default function MainApp() {
 
   useEffect(() => {
     window.electronAPI?.getSettings().then((s) => {
+      setNeedsOnboarding(!s.hasChosenUiLocale);
       setHotkeys({
         screen: formatDisplay(s.hotkeyScreen),
         region: formatDisplay(s.hotkeyRegion),
@@ -29,7 +34,7 @@ export default function MainApp() {
         grammar: formatDisplay(s.hotkeyGrammar),
       });
     });
-  }, [view]);
+  }, [view, ready]);
 
   const translateScreen = useCallback(() => {
     window.electronAPI?.translateScreen();
@@ -51,6 +56,20 @@ export default function MainApp() {
     window.electronAPI?.translateGrammar();
   }, []);
 
+  if (needsOnboarding === null || !ready) {
+    return (
+      <div className="main-app">
+        <div className="loading-state">
+          <div className="spinner" />
+        </div>
+      </div>
+    );
+  }
+
+  if (needsOnboarding) {
+    return <LanguageOnboarding onComplete={() => setNeedsOnboarding(false)} />;
+  }
+
   if (view === 'settings') {
     return <Settings onBack={() => setView('home')} />;
   }
@@ -58,18 +77,18 @@ export default function MainApp() {
   return (
     <div className="main-app">
       <header className="main-header">
-        <img src="./logo.png" alt="Luma" className="main-logo" />
+        <img src="./logo.png" alt={t('app.name')} className="main-logo" />
         <div className="header-text">
-          <h1>Luma</h1>
-          <p className="subtitle">Screen translation powered by Gemini</p>
+          <h1>{t('app.name')}</h1>
+          <p className="subtitle">{t('app.subtitle')}</p>
           <p className="author-credit">
-            by{' '}
+            {t('app.by')}{' '}
             <a
-              href="https://yhonebox.github.io/yh/"
+              href="https://yhonebox.github.io/e-portfolio/"
               onClick={(e) => {
                 e.preventDefault();
                 window.electronAPI?.openDictionary(
-                  'https://yhonebox.github.io/yh/'
+                  'https://yhonebox.github.io/e-portfolio/'
                 );
               }}
             >
@@ -81,8 +100,8 @@ export default function MainApp() {
         <button
           className="settings-btn"
           onClick={() => setView('settings')}
-          aria-label="Settings"
-          title="Settings"
+          aria-label={t('app.settings')}
+          title={t('app.settings')}
         >
           ⚙
         </button>
@@ -92,35 +111,35 @@ export default function MainApp() {
         <button className="action-btn primary" onClick={translateScreen}>
           <span className="action-icon">⬚</span>
           <span className="action-text">
-            <strong>Translate Screen</strong>
+            <strong>{t('app.actions.translateScreen')}</strong>
             <small>{hotkeys.screen}</small>
           </span>
         </button>
         <button className="action-btn" onClick={translateRegion}>
           <span className="action-icon">◫</span>
           <span className="action-text">
-            <strong>Select Region</strong>
+            <strong>{t('app.actions.selectRegion')}</strong>
             <small>{hotkeys.region}</small>
           </span>
         </button>
         <button className="action-btn" onClick={translateSelection}>
           <span className="action-icon">T</span>
           <span className="action-text">
-            <strong>Translate Selection</strong>
+            <strong>{t('app.actions.translateSelection')}</strong>
             <small>{hotkeys.selection}</small>
           </span>
         </button>
         <button className="action-btn" onClick={translateReplace}>
           <span className="action-icon">⇄</span>
           <span className="action-text">
-            <strong>Replace Selection</strong>
+            <strong>{t('app.actions.replaceSelection')}</strong>
             <small>{hotkeys.replace}</small>
           </span>
         </button>
         <button className="action-btn" onClick={translateGrammar}>
           <span className="action-icon">✎</span>
           <span className="action-text">
-            <strong>Fix Grammar</strong>
+            <strong>{t('app.actions.fixGrammar')}</strong>
             <small>{hotkeys.grammar}</small>
           </span>
         </button>
@@ -128,17 +147,10 @@ export default function MainApp() {
 
       <section className="content">
         <div className="idle-state">
-          <p>Results appear in a popup near your cursor.</p>
-          <p className="hint">
-            Highlight text, then use selection lookup, replace translation, or
-            fix grammar — each pastes or shows results without leaving your app.
-          </p>
-          <p className="hint">
-            Customize hotkeys and languages in Settings.
-          </p>
-          <p className="hint">
-            Closing this window keeps Luma running in the system tray.
-          </p>
+          <p>{t('app.hints.popup')}</p>
+          <p className="hint">{t('app.hints.workflows')}</p>
+          <p className="hint">{t('app.hints.customize')}</p>
+          <p className="hint">{t('app.hints.tray')}</p>
         </div>
       </section>
 
@@ -149,14 +161,14 @@ export default function MainApp() {
             <span className="footer-sep">·</span>
           </>
         ) : null}
-        Hotkeys stay active in the background
+        {t('app.footerHotkeys')}
         <span className="footer-sep">·</span>
         <a
-          href="https://yhonebox.github.io/yh/"
+          href="https://yhonebox.github.io/e-portfolio/"
           onClick={(e) => {
             e.preventDefault();
             window.electronAPI?.openDictionary(
-              'https://yhonebox.github.io/yh/'
+              'https://yhonebox.github.io/e-portfolio/'
             );
           }}
         >

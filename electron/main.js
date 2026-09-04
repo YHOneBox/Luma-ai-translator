@@ -47,6 +47,12 @@ const { validateHotkeys } = require('./hotkey-utils');
 const { enrichWithPronunciation, enrichPhraseResult, resolveLookupWord } = require('./pronunciation');
 const { resolveLayoutMode } = require('./translate-mode');
 const { recordHotkey } = require('./hotkey-recorder');
+const {
+  getSupportedLocales,
+  getBundle,
+  setActiveLocale,
+  t,
+} = require('./i18n');
 
 const isDev = !app.isPackaged;
 const ICON_PATH = path.join(__dirname, '../assets/logo.png');
@@ -75,30 +81,40 @@ function createTrayIcon() {
   return image;
 }
 
-function createTray() {
-  tray = new Tray(createTrayIcon());
-  tray.setToolTip('Luma');
+function rebuildTrayMenu() {
+  if (!tray) return;
 
+  tray.setToolTip(t('app.name'));
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Open Luma', click: () => showMainWindow() },
+    { label: t('tray.open'), click: () => showMainWindow() },
     { type: 'separator' },
-    { label: 'Translate Screen', click: () => startTranslation(null) },
-    { label: 'Translate Selection', click: () => startSelectionTranslation() },
-    { label: 'Replace Selection', click: () => startReplaceSelectionTranslation() },
-    { label: 'Fix Grammar', click: () => startGrammarCorrectionSelection() },
-    { label: 'Select Region', click: () => openRegionSelector() },
+    { label: t('tray.translateScreen'), click: () => startTranslation(null) },
+    { label: t('tray.translateSelection'), click: () => startSelectionTranslation() },
+    { label: t('tray.replaceSelection'), click: () => startReplaceSelectionTranslation() },
+    { label: t('tray.fixGrammar'), click: () => startGrammarCorrectionSelection() },
+    { label: t('tray.selectRegion'), click: () => openRegionSelector() },
     { type: 'separator' },
     {
-      label: 'Quit',
+      label: t('tray.quit'),
       click: () => {
         appIsQuitting = true;
         app.quit();
       },
     },
   ]);
-
   tray.setContextMenu(contextMenu);
+}
+
+function createTray() {
+  tray = new Tray(createTrayIcon());
+  rebuildTrayMenu();
   tray.on('double-click', () => showMainWindow());
+}
+
+function applyUiLocale(localeCode) {
+  const next = setActiveLocale(localeCode);
+  rebuildTrayMenu();
+  return getBundle(next);
 }
 
 function showMainWindow() {
@@ -366,10 +382,10 @@ async function runWithPopup(task) {
     let enriched;
 
     if (layoutMode === 'word') {
-      sendProgress('Loading pronunciation...');
+      sendProgress(t('progress.loadingPronunciation'));
       enriched = await enrichWithPronunciation(result);
     } else {
-      sendProgress('Loading audio...');
+      sendProgress(t('progress.loadingAudio'));
       const { targetLanguage } = loadSettings();
       enriched = await enrichPhraseResult(result, targetLanguage);
     }
@@ -382,7 +398,7 @@ async function runWithPopup(task) {
     });
   } catch (err) {
     sendToPopup('translation:error', {
-      message: err.message || 'Translation failed.',
+      message: err.message || t('progress.translationFailed'),
     });
   }
 }
@@ -398,7 +414,7 @@ async function startTranslation(region) {
   await new Promise((resolve) => setTimeout(resolve, 200));
 
   await runWithPopup(async (sendProgress) => {
-    sendProgress('Capturing screen...');
+    sendProgress(t('progress.capturing'));
     const imageBuffer = await captureScreen(region);
     return translateScreenshot(imageBuffer, sendProgress);
   });
@@ -413,7 +429,7 @@ async function startSelectionTranslation() {
     createPopupWindow();
     await waitForPopupReady();
     sendToPopup('translation:error', {
-      message: err.message || 'Could not read selected text.',
+      message: err.message || t('progress.couldNotReadSelection'),
     });
     return;
   }
@@ -428,35 +444,34 @@ async function startReplaceSelectionTranslation() {
     text = await getSelectedText();
   } catch (err) {
     await showStatusBar(
-      err.message || 'Could not read selected text. Highlight text and try again.',
+      err.message || t('statusBar.couldNotReadSelection'),
       { variant: 'error', autoCloseMs: 4500 }
     );
     return;
   }
 
   try {
-    await showStatusBar('Replace translation in progress…', { variant: 'loading' });
+    await showStatusBar(t('statusBar.replaceInProgress'), { variant: 'loading' });
 
     const result = await translateForReplace(text, (message) => {
-      showStatusBar(message || 'Translating selection…', { variant: 'loading' });
+      showStatusBar(message || t('statusBar.translatingSelection'), { variant: 'loading' });
     });
 
     if (!result?.translation?.trim()) {
-      throw new Error('Translation was empty, so nothing could be replaced.');
+      throw new Error(t('statusBar.translationEmpty'));
     }
 
-    await showStatusBar('Pasting translation…', { variant: 'loading' });
-    // Close before paste so the status window never interferes with focus.
+    await showStatusBar(t('statusBar.pastingTranslation'), { variant: 'loading' });
     closeStatusBar();
     await replaceSelectedText(result.translation);
 
-    await showStatusBar('Replace complete', {
+    await showStatusBar(t('statusBar.replaceComplete'), {
       variant: 'success',
       autoCloseMs: 2500,
     });
   } catch (err) {
     await showStatusBar(
-      err.message || 'Could not replace the selected text.',
+      err.message || t('statusBar.replaceFailed'),
       { variant: 'error', autoCloseMs: 4500 }
     );
   }
@@ -469,24 +484,24 @@ async function startGrammarCorrectionSelection() {
     text = await getSelectedText();
   } catch (err) {
     await showStatusBar(
-      err.message || 'Could not read selected text. Highlight text and try again.',
+      err.message || t('statusBar.couldNotReadSelection'),
       { variant: 'error', autoCloseMs: 4500 }
     );
     return;
   }
 
   try {
-    await showStatusBar('Grammar check in progress…', { variant: 'loading' });
+    await showStatusBar(t('statusBar.grammarInProgress'), { variant: 'loading' });
 
     const result = await correctGrammarForReplace(text, (message) => {
-      showStatusBar(message || 'Checking grammar…', { variant: 'loading' });
+      showStatusBar(message || t('statusBar.checkingGrammar'), { variant: 'loading' });
     });
 
     if (!result?.correctedText?.trim()) {
-      throw new Error('Grammar correction was empty, so nothing could be replaced.');
+      throw new Error(t('statusBar.grammarEmpty'));
     }
 
-    await showStatusBar('Pasting correction…', { variant: 'loading' });
+    await showStatusBar(t('statusBar.pastingCorrection'), { variant: 'loading' });
     closeStatusBar();
     await replaceSelectedText(result.correctedText);
 
@@ -494,7 +509,7 @@ async function startGrammarCorrectionSelection() {
       result.correctedText.trim() === String(text || '').trim();
 
     await showStatusBar(
-      unchanged ? 'No grammar changes needed' : 'Grammar fix complete',
+      unchanged ? t('statusBar.noGrammarChanges') : t('statusBar.grammarComplete'),
       {
         variant: 'success',
         autoCloseMs: 2500,
@@ -502,7 +517,7 @@ async function startGrammarCorrectionSelection() {
     );
   } catch (err) {
     await showStatusBar(
-      err.message || 'Could not correct the selected text.',
+      err.message || t('statusBar.grammarFailed'),
       { variant: 'error', autoCloseMs: 4500 }
     );
   }
@@ -568,13 +583,29 @@ function setupIpc() {
   ipcMain.handle('settings:save', (_event, updates) => {
     validateHotkeys({ ...loadSettings(), ...updates });
     saveSettings(updates);
+    if (updates?.uiLocale) {
+      applyUiLocale(updates.uiLocale);
+    }
     registerHotkeys();
     return getPublicSettings();
   });
   ipcMain.handle('settings:reset', () => {
-    resetSettings();
+    const reset = resetSettings();
+    applyUiLocale(reset.uiLocale);
     registerHotkeys();
     return getPublicSettings();
+  });
+
+  ipcMain.handle('i18n:getBundle', () => getBundle());
+  ipcMain.handle('i18n:getLocales', () => getSupportedLocales());
+  ipcMain.handle('i18n:setLocale', (_event, payload = {}) => {
+    const code = payload.locale || payload;
+    const markChosen = payload.markChosen !== false;
+    const saved = saveSettings({
+      uiLocale: code,
+      ...(markChosen ? { hasChosenUiLocale: true } : {}),
+    });
+    return applyUiLocale(saved.uiLocale);
   });
 
   ipcMain.handle('apiKeys:add', (_event, payload) => {
@@ -608,7 +639,7 @@ function setupIpc() {
     try {
       return await scanAvailableModels();
     } catch (err) {
-      throw new Error(err.message || 'Failed to scan models.');
+      throw new Error(err.message || t('settings.status.scanFailed'));
     }
   });
 
@@ -633,6 +664,9 @@ app.whenReady().then(() => {
   if (process.platform === 'win32') {
     app.setAppUserModelId('com.luma.app');
   }
+
+  const settings = loadSettings();
+  applyUiLocale(settings.uiLocale);
 
   createTray();
   createMainWindow();

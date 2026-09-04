@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "ar",
+    "nativeName": "العربية",
+    "englishName": "Arabic",
+    "dir": "rtl"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "ترجمة الشاشة مدعومة بـ Gemini",
+    "by": "بواسطة",
+    "settings": "الإعدادات",
+    "actions": {
+      "translateScreen": "ترجمة الشاشة",
+      "selectRegion": "تحديد منطقة",
+      "translateSelection": "ترجمة التحديد",
+      "replaceSelection": "استبدال التحديد",
+      "fixGrammar": "تصحيح القواعد"
+    },
+    "hints": {
+      "popup": "تظهر النتائج في نافذة منبثقة بالقرب من المؤشر.",
+      "workflows": "ظلل النص، ثم استخدم البحث عن التحديد أو الاستبدال بالترجمة أو تصحيح القواعد — كل إجراء يلصق النتائج أو يعرضها دون مغادرة تطبيقك.",
+      "customize": "خصص اختصارات لوحة المفاتيح واللغات من الإعدادات.",
+      "tray": "إغلاق هذه النافذة يبقي Luma يعمل في علبة النظام."
+    },
+    "footerHotkeys": "تظل الاختصارات نشطة في الخلفية"
+  },
+  "onboarding": {
+    "title": "اختر لغتك",
+    "subtitle": "حدد لغة واجهة Luma. يمكنك تغييرها لاحقًا من الإعدادات.",
+    "continue": "متابعة"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "loading": "جارٍ تحميل الإعدادات…",
+    "back": "رجوع",
+    "sections": {
+      "apiKeys": "مفاتيح API",
+      "appearance": "المظهر",
+      "basic": "أساسي",
+      "hotkeys": "اختصارات لوحة المفاتيح",
+      "models": "النماذج",
+      "systemPrompt": "موجه النظام"
+    },
+    "apiKeys": {
+      "hintBefore": "أضف مفتاح Gemini API هنا. تُخزَّن المفاتيح محليًا على هذا الجهاز ولا تُرفع أبدًا إلى GitHub. احصل على مفتاح من",
+      "hintLink": "Google AI Studio",
+      "hintAfter": ".",
+      "envNote": "تم العثور على مفتاح في ملف .env المحلي وسيُستخدم حتى تضيف مفتاحًا أدناه.",
+      "empty": "لا توجد مفاتيح API محفوظة بعد.",
+      "remove": "إزالة",
+      "labelOptional": "تسمية (اختياري)",
+      "labelPlaceholder": "شخصي / عمل",
+      "geminiKey": "مفتاح Gemini API",
+      "cancel": "إلغاء",
+      "saveKey": "حفظ المفتاح",
+      "adding": "جارٍ الإضافة…",
+      "add": "+ إضافة مفتاح API"
+    },
+    "appearance": {
+      "uiLanguage": "لغة التطبيق",
+      "uiLanguageHint": "لغة القوائم والأزرار والإعدادات في Luma."
+    },
+    "basic": {
+      "targetLanguage": "اللغة الهدف",
+      "targetHint": "لغة نتائج ترجمة الشاشة / التحديد عبر {targetLanguage}.",
+      "replaceLanguage": "لغة الاستبدال",
+      "replaceHint": "اللغة المستخدمة عند استبدال النص المحدد في مكانه (اختصار استبدال التحديد)."
+    },
+    "hotkeys": {
+      "resetAll": "إعادة تعيين كل الاختصارات",
+      "hintBefore": "انقر",
+      "hintStrong": "تعيين المفتاح",
+      "hintAfter": "، ثم اضغط اختصارك. يُحفظ تلقائيًا.",
+      "screen": "ترجمة الشاشة",
+      "region": "تحديد منطقة",
+      "selection": "ترجمة التحديد",
+      "replace": "استبدال التحديد",
+      "grammar": "تصحيح القواعد"
+    },
+    "models": {
+      "scan": "فحص النماذج المتاحة",
+      "scanning": "جارٍ الفحص…",
+      "primary": "النموذج الأساسي",
+      "primaryPlaceholder": "افحص النماذج للاختيار",
+      "fallback": "نماذج الاحتياط",
+      "fallbackHint": "تُجرَّب بالترتيب إذا فشل النموذج الأساسي.",
+      "fallbackEmpty": "افحص النماذج لتهيئة نماذج الاحتياط."
+    },
+    "systemPrompt": {
+      "reset": "إعادة التعيين إلى الافتراضي",
+      "hint": "خصص كيفية تفسير النموذج للقطات الشاشة. استخدم {targetLanguage} كعنصر نائب."
+    },
+    "actions": {
+      "resetAll": "إعادة تعيين الكل",
+      "save": "حفظ الإعدادات",
+      "saving": "جارٍ الحفظ…"
+    },
+    "status": {
+      "modelsFound": "تم العثور على {count} نموذج(نماذج) متاح(ة).",
+      "saved": "تم حفظ الإعدادات.",
+      "reset": "تمت إعادة الإعدادات إلى الافتراضيات.",
+      "hotkeySaved": "تم حفظ الاختصار.",
+      "hotkeyReset": "تمت إعادة تعيين الاختصار وحفظه.",
+      "hotkeysReset": "تمت إعادة تعيين كل الاختصارات إلى الافتراضيات.",
+      "enterApiKey": "أدخل مفتاح API قبل الإضافة.",
+      "apiKeyAdded": "تمت إضافة مفتاح API.",
+      "apiKeyActive": "تم تحديث مفتاح API النشط.",
+      "apiKeyRemoved": "تمت إزالة مفتاح API.",
+      "scanFailed": "فشل فحص النماذج.",
+      "saveFailed": "فشل حفظ الإعدادات.",
+      "hotkeySaveFailed": "فشل حفظ الاختصار.",
+      "hotkeyResetFailed": "فشلت إعادة تعيين الاختصار.",
+      "hotkeysResetFailed": "فشلت إعادة تعيين الاختصارات.",
+      "apiKeyAddFailed": "فشلت إضافة مفتاح API.",
+      "apiKeyActiveFailed": "فشل تعيين مفتاح API النشط.",
+      "apiKeyRemoveFailed": "فشلت إزالة مفتاح API."
+    }
+  },
+  "hotkey": {
+    "empty": "انقر على \"تعيين المفتاح\" للتعيين",
+    "listening": "جارٍ الاستماع…",
+    "listeningHint": "جارٍ الاستماع… اضغط مجموعة المفاتيح (Esc للإلغاء)",
+    "setKey": "تعيين المفتاح",
+    "reset": "إعادة تعيين",
+    "alreadyDefault": "يستخدم الافتراضي بالفعل",
+    "resetTitle": "إعادة التعيين إلى الافتراضي والحفظ",
+    "recordFailed": "تعذر تسجيل الاختصار."
+  },
+  "popup": {
+    "translating": "جارٍ الترجمة…",
+    "error": "حدث خطأ ما.",
+    "close": "إغلاق",
+    "playAudio": "تشغيل الصوت",
+    "copyText": "نسخ النص",
+    "copied": "تم النسخ",
+    "copy": "نسخ",
+    "showLess": "عرض أقل",
+    "showAll": "عرض الكل",
+    "playPronunciation": "تشغيل النطق",
+    "copyTranslation": "نسخ الترجمة",
+    "inThisContext": "في هذا السياق"
+  },
+  "region": {
+    "hint": "اسحب لتحديد منطقة · Esc للإلغاء",
+    "title": "تحديد منطقة"
+  },
+  "tray": {
+    "open": "فتح Luma",
+    "translateScreen": "ترجمة الشاشة",
+    "translateSelection": "ترجمة التحديد",
+    "replaceSelection": "استبدال التحديد",
+    "fixGrammar": "تصحيح القواعد",
+    "selectRegion": "تحديد منطقة",
+    "quit": "إنهاء"
+  },
+  "statusBar": {
+    "working": "جارٍ العمل…",
+    "replaceInProgress": "جارٍ الاستبدال بالترجمة…",
+    "translatingSelection": "جارٍ ترجمة التحديد…",
+    "pastingTranslation": "جارٍ لصق الترجمة…",
+    "replaceComplete": "اكتمل الاستبدال",
+    "grammarInProgress": "جارٍ التحقق من القواعد…",
+    "checkingGrammar": "جارٍ فحص القواعد…",
+    "pastingCorrection": "جارٍ لصق التصحيح…",
+    "grammarComplete": "اكتمل تصحيح القواعد",
+    "noGrammarChanges": "لا حاجة لتغييرات قواعدية",
+    "couldNotReadSelection": "تعذر قراءة النص المحدد. ظلل النص وحاول مرة أخرى.",
+    "translationEmpty": "كانت الترجمة فارغة، لذا تعذر الاستبدال.",
+    "replaceFailed": "تعذر استبدال النص المحدد.",
+    "grammarEmpty": "كان تصحيح القواعد فارغًا، لذا تعذر الاستبدال.",
+    "grammarFailed": "تعذر تصحيح النص المحدد."
+  },
+  "progress": {
+    "capturing": "جارٍ التقاط الشاشة…",
+    "loadingPronunciation": "جارٍ تحميل النطق…",
+    "loadingAudio": "جارٍ تحميل الصوت…",
+    "translationFailed": "فشلت الترجمة.",
+    "couldNotReadSelection": "تعذر قراءة النص المحدد."
+  },
+  "modelSelect": {
+    "placeholder": "اختر نموذجًا",
+    "empty": "افحص النماذج أولاً"
+  }
+}

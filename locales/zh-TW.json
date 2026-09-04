@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "zh-TW",
+    "nativeName": "繁體中文",
+    "englishName": "Traditional Chinese",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "由 Gemini 驅動的螢幕翻譯",
+    "by": "作者",
+    "settings": "設定",
+    "actions": {
+      "translateScreen": "翻譯螢幕",
+      "selectRegion": "框選區域",
+      "translateSelection": "翻譯選取內容",
+      "replaceSelection": "取代選取內容",
+      "fixGrammar": "修正文法"
+    },
+    "hints": {
+      "popup": "結果會顯示在游標附近的彈出視窗中。",
+      "workflows": "先反白文字，再使用選取查詢、取代翻譯或修正文法——不必離開目前應用程式即可貼上或查看結果。",
+      "customize": "可在設定中自訂快捷鍵與語言。",
+      "tray": "關閉此視窗後，Luma 仍會在系統匣中繼續執行。"
+    },
+    "footerHotkeys": "快捷鍵在背景維持作用"
+  },
+  "onboarding": {
+    "title": "選擇語言",
+    "subtitle": "選擇 Luma 介面使用的語言。之後可在設定中變更。",
+    "continue": "繼續"
+  },
+  "settings": {
+    "title": "設定",
+    "loading": "正在載入設定…",
+    "back": "返回",
+    "sections": {
+      "apiKeys": "API 金鑰",
+      "appearance": "外觀",
+      "basic": "基本",
+      "hotkeys": "快捷鍵",
+      "models": "模型",
+      "systemPrompt": "系統提示詞"
+    },
+    "apiKeys": {
+      "hintBefore": "在此新增你的 Gemini API 金鑰。金鑰僅儲存在本機，絕不會上傳至 GitHub。可從",
+      "hintLink": "Google AI Studio",
+      "hintAfter": "取得金鑰。",
+      "envNote": "已在本機 .env 檔案中找到金鑰，在你於下方新增金鑰之前將繼續使用該金鑰。",
+      "empty": "尚未儲存任何 API 金鑰。",
+      "remove": "移除",
+      "labelOptional": "標籤（選填）",
+      "labelPlaceholder": "個人 / 工作",
+      "geminiKey": "Gemini API 金鑰",
+      "cancel": "取消",
+      "saveKey": "儲存金鑰",
+      "adding": "正在新增…",
+      "add": "+ 新增 API 金鑰"
+    },
+    "appearance": {
+      "uiLanguage": "應用程式語言",
+      "uiLanguageHint": "Luma 中選單、按鈕與設定的顯示語言。"
+    },
+    "basic": {
+      "targetLanguage": "目標語言",
+      "targetHint": "螢幕 / 選取查詢結果所使用的語言，對應 {targetLanguage}。",
+      "replaceLanguage": "取代語言",
+      "replaceHint": "原地取代所選文字時使用的語言（取代選取內容快捷鍵）。"
+    },
+    "hotkeys": {
+      "resetAll": "重設全部快捷鍵",
+      "hintBefore": "點選",
+      "hintStrong": "設定按鍵",
+      "hintAfter": "，然後按下你的快捷鍵。會自動儲存。",
+      "screen": "翻譯螢幕",
+      "region": "框選區域",
+      "selection": "翻譯選取內容",
+      "replace": "取代選取內容",
+      "grammar": "修正文法"
+    },
+    "models": {
+      "scan": "掃描可用模型",
+      "scanning": "正在掃描…",
+      "primary": "主要模型",
+      "primaryPlaceholder": "掃描模型後再選擇",
+      "fallback": "備援模型",
+      "fallbackHint": "主要模型失敗時依序嘗試。",
+      "fallbackEmpty": "請先掃描模型以設定備援模型。"
+    },
+    "systemPrompt": {
+      "reset": "還原預設",
+      "hint": "自訂模型如何解讀螢幕截圖。可使用 {targetLanguage} 作為預留位置。"
+    },
+    "actions": {
+      "resetAll": "全部重設",
+      "save": "儲存設定",
+      "saving": "正在儲存…"
+    },
+    "status": {
+      "modelsFound": "找到 {count} 個可用模型。",
+      "saved": "設定已儲存。",
+      "reset": "設定已還原為預設值。",
+      "hotkeySaved": "快捷鍵已儲存。",
+      "hotkeyReset": "快捷鍵已重設並儲存。",
+      "hotkeysReset": "所有快捷鍵已還原為預設值。",
+      "enterApiKey": "新增前請先輸入 API 金鑰。",
+      "apiKeyAdded": "API 金鑰已新增。",
+      "apiKeyActive": "目前使用的 API 金鑰已更新。",
+      "apiKeyRemoved": "API 金鑰已移除。",
+      "scanFailed": "掃描模型失敗。",
+      "saveFailed": "儲存設定失敗。",
+      "hotkeySaveFailed": "儲存快捷鍵失敗。",
+      "hotkeyResetFailed": "重設快捷鍵失敗。",
+      "hotkeysResetFailed": "重設全部快捷鍵失敗。",
+      "apiKeyAddFailed": "新增 API 金鑰失敗。",
+      "apiKeyActiveFailed": "設定目前 API 金鑰失敗。",
+      "apiKeyRemoveFailed": "移除 API 金鑰失敗。"
+    }
+  },
+  "hotkey": {
+    "empty": "點選「設定按鍵」進行指定",
+    "listening": "等待按鍵…",
+    "listeningHint": "等待按鍵…請按下組合鍵（Esc 取消）",
+    "setKey": "設定按鍵",
+    "reset": "重設",
+    "alreadyDefault": "已在使用預設值",
+    "resetTitle": "還原預設並儲存",
+    "recordFailed": "無法記錄快捷鍵。"
+  },
+  "popup": {
+    "translating": "正在翻譯…",
+    "error": "發生錯誤。",
+    "close": "關閉",
+    "playAudio": "播放音訊",
+    "copyText": "複製文字",
+    "copied": "已複製",
+    "copy": "複製",
+    "showLess": "顯示較少",
+    "showAll": "顯示全部",
+    "playPronunciation": "播放發音",
+    "copyTranslation": "複製譯文",
+    "inThisContext": "在此語境中"
+  },
+  "region": {
+    "hint": "拖曳以框選區域 · 按 Esc 取消",
+    "title": "框選區域"
+  },
+  "tray": {
+    "open": "開啟 Luma",
+    "translateScreen": "翻譯螢幕",
+    "translateSelection": "翻譯選取內容",
+    "replaceSelection": "取代選取內容",
+    "fixGrammar": "修正文法",
+    "selectRegion": "框選區域",
+    "quit": "結束"
+  },
+  "statusBar": {
+    "working": "處理中…",
+    "replaceInProgress": "正在進行取代翻譯…",
+    "translatingSelection": "正在翻譯選取內容…",
+    "pastingTranslation": "正在貼上譯文…",
+    "replaceComplete": "取代完成",
+    "grammarInProgress": "正在檢查文法…",
+    "checkingGrammar": "正在檢查文法…",
+    "pastingCorrection": "正在貼上修正內容…",
+    "grammarComplete": "文法修正完成",
+    "noGrammarChanges": "無需修改文法",
+    "couldNotReadSelection": "無法讀取所選文字。請先反白文字後再試。",
+    "translationEmpty": "譯文為空，無法進行取代。",
+    "replaceFailed": "無法取代所選文字。",
+    "grammarEmpty": "文法修正結果為空，無法進行取代。",
+    "grammarFailed": "無法修正所選文字。"
+  },
+  "progress": {
+    "capturing": "正在擷取螢幕…",
+    "loadingPronunciation": "正在載入發音…",
+    "loadingAudio": "正在載入音訊…",
+    "translationFailed": "翻譯失敗。",
+    "couldNotReadSelection": "無法讀取所選文字。"
+  },
+  "modelSelect": {
+    "placeholder": "選擇模型",
+    "empty": "請先掃描模型"
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "en",
+    "nativeName": "English",
+    "englishName": "English",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "Screen translation powered by Gemini",
+    "by": "by",
+    "settings": "Settings",
+    "actions": {
+      "translateScreen": "Translate Screen",
+      "selectRegion": "Select Region",
+      "translateSelection": "Translate Selection",
+      "replaceSelection": "Replace Selection",
+      "fixGrammar": "Fix Grammar"
+    },
+    "hints": {
+      "popup": "Results appear in a popup near your cursor.",
+      "workflows": "Highlight text, then use selection lookup, replace translation, or fix grammar — each pastes or shows results without leaving your app.",
+      "customize": "Customize hotkeys and languages in Settings.",
+      "tray": "Closing this window keeps Luma running in the system tray."
+    },
+    "footerHotkeys": "Hotkeys stay active in the background"
+  },
+  "onboarding": {
+    "title": "Choose your language",
+    "subtitle": "Select the language for Luma’s interface. You can change this later in Settings.",
+    "continue": "Continue"
+  },
+  "settings": {
+    "title": "Settings",
+    "loading": "Loading settings...",
+    "back": "Back",
+    "sections": {
+      "apiKeys": "API Keys",
+      "appearance": "Appearance",
+      "basic": "Basic",
+      "hotkeys": "Hotkeys",
+      "models": "Models",
+      "systemPrompt": "System Prompt"
+    },
+    "apiKeys": {
+      "hintBefore": "Add your Gemini API key here. Keys are stored locally on this device and never uploaded to GitHub. Get a key from",
+      "hintLink": "Google AI Studio",
+      "hintAfter": ".",
+      "envNote": "A key was found in your local .env file and will be used until you add a key below.",
+      "empty": "No saved API keys yet.",
+      "remove": "Remove",
+      "labelOptional": "Label (optional)",
+      "labelPlaceholder": "Personal / Work",
+      "geminiKey": "Gemini API key",
+      "cancel": "Cancel",
+      "saveKey": "Save key",
+      "adding": "Adding...",
+      "add": "+ Add API Key"
+    },
+    "appearance": {
+      "uiLanguage": "App language",
+      "uiLanguageHint": "Language of menus, buttons, and settings in Luma."
+    },
+    "basic": {
+      "targetLanguage": "Target language",
+      "targetHint": "Language for screen / selection lookup results via {targetLanguage}.",
+      "replaceLanguage": "Replace language",
+      "replaceHint": "Language used when replacing selected text in place (Replace Selection hotkey)."
+    },
+    "hotkeys": {
+      "resetAll": "Reset all hotkeys",
+      "hintBefore": "Click",
+      "hintStrong": "Set key",
+      "hintAfter": ", then press your shortcut. Saves automatically.",
+      "screen": "Translate screen",
+      "region": "Select region",
+      "selection": "Translate selection",
+      "replace": "Replace selection",
+      "grammar": "Fix grammar"
+    },
+    "models": {
+      "scan": "Scan Available Models",
+      "scanning": "Scanning...",
+      "primary": "Primary model",
+      "primaryPlaceholder": "Scan models to choose",
+      "fallback": "Fallback models",
+      "fallbackHint": "Tried in order if the primary model fails.",
+      "fallbackEmpty": "Scan models to configure fallbacks."
+    },
+    "systemPrompt": {
+      "reset": "Reset to Default",
+      "hint": "Customize how the model interprets screenshots. Use {targetLanguage} as a placeholder."
+    },
+    "actions": {
+      "resetAll": "Reset All",
+      "save": "Save Settings",
+      "saving": "Saving..."
+    },
+    "status": {
+      "modelsFound": "Found {count} available model(s).",
+      "saved": "Settings saved.",
+      "reset": "Settings reset to defaults.",
+      "hotkeySaved": "Hotkey saved.",
+      "hotkeyReset": "Hotkey reset and saved.",
+      "hotkeysReset": "All hotkeys reset to defaults.",
+      "enterApiKey": "Enter an API key before adding.",
+      "apiKeyAdded": "API key added.",
+      "apiKeyActive": "Active API key updated.",
+      "apiKeyRemoved": "API key removed.",
+      "scanFailed": "Failed to scan models.",
+      "saveFailed": "Failed to save settings.",
+      "hotkeySaveFailed": "Failed to save hotkey.",
+      "hotkeyResetFailed": "Failed to reset hotkey.",
+      "hotkeysResetFailed": "Failed to reset hotkeys.",
+      "apiKeyAddFailed": "Failed to add API key.",
+      "apiKeyActiveFailed": "Failed to set active API key.",
+      "apiKeyRemoveFailed": "Failed to remove API key."
+    }
+  },
+  "hotkey": {
+    "empty": "Click \"Set key\" to assign",
+    "listening": "Listening…",
+    "listeningHint": "Listening… press key combo (Esc to cancel)",
+    "setKey": "Set key",
+    "reset": "Reset",
+    "alreadyDefault": "Already using default",
+    "resetTitle": "Reset to default and save",
+    "recordFailed": "Could not record hotkey."
+  },
+  "popup": {
+    "translating": "Translating...",
+    "error": "Something went wrong.",
+    "close": "Close",
+    "playAudio": "Play audio",
+    "copyText": "Copy text",
+    "copied": "Copied",
+    "copy": "Copy",
+    "showLess": "Show less",
+    "showAll": "Show all",
+    "playPronunciation": "Play pronunciation",
+    "copyTranslation": "Copy translation",
+    "inThisContext": "In this context"
+  },
+  "region": {
+    "hint": "Drag to select a region · Esc to cancel",
+    "title": "Select Region"
+  },
+  "tray": {
+    "open": "Open Luma",
+    "translateScreen": "Translate Screen",
+    "translateSelection": "Translate Selection",
+    "replaceSelection": "Replace Selection",
+    "fixGrammar": "Fix Grammar",
+    "selectRegion": "Select Region",
+    "quit": "Quit"
+  },
+  "statusBar": {
+    "working": "Working…",
+    "replaceInProgress": "Replace translation in progress…",
+    "translatingSelection": "Translating selection…",
+    "pastingTranslation": "Pasting translation…",
+    "replaceComplete": "Replace complete",
+    "grammarInProgress": "Grammar check in progress…",
+    "checkingGrammar": "Checking grammar…",
+    "pastingCorrection": "Pasting correction…",
+    "grammarComplete": "Grammar fix complete",
+    "noGrammarChanges": "No grammar changes needed",
+    "couldNotReadSelection": "Could not read selected text. Highlight text and try again.",
+    "translationEmpty": "Translation was empty, so nothing could be replaced.",
+    "replaceFailed": "Could not replace the selected text.",
+    "grammarEmpty": "Grammar correction was empty, so nothing could be replaced.",
+    "grammarFailed": "Could not correct the selected text."
+  },
+  "progress": {
+    "capturing": "Capturing screen...",
+    "loadingPronunciation": "Loading pronunciation...",
+    "loadingAudio": "Loading audio...",
+    "translationFailed": "Translation failed.",
+    "couldNotReadSelection": "Could not read selected text."
+  },
+  "modelSelect": {
+    "placeholder": "Select a model",
+    "empty": "Scan models first"
+  }
+}

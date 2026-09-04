@@ -24,6 +24,8 @@ const DEFAULT_SETTINGS = {
   systemPrompt: DEFAULT_SYSTEM_PROMPT,
   targetLanguage: 'Chinese (Traditional)',
   replaceLanguage: 'English',
+  uiLocale: 'en',
+  hasChosenUiLocale: false,
   hotkeyScreen: 'Alt+T',
   hotkeyRegion: 'Alt+C',
   hotkeySelection: 'Alt+X',
@@ -51,8 +53,20 @@ const DEPRECATED_MODELS = new Set([
 ]);
 
 function migrateSettings(settings) {
-  const migrated = { ...DEFAULT_SETTINGS, ...settings };
+  const incoming = settings && typeof settings === 'object' ? settings : {};
+  const isExistingInstall = Object.keys(incoming).length > 0;
+  const migrated = { ...DEFAULT_SETTINGS, ...incoming };
   let changed = false;
+
+  if (isExistingInstall && incoming.hasChosenUiLocale === undefined) {
+    migrated.hasChosenUiLocale = true;
+    changed = true;
+  }
+
+  if (!migrated.uiLocale) {
+    migrated.uiLocale = DEFAULT_SETTINGS.uiLocale;
+    changed = true;
+  }
 
   if (DEPRECATED_MODELS.has(migrated.primaryModel)) {
     migrated.primaryModel = DEFAULT_SETTINGS.primaryModel;

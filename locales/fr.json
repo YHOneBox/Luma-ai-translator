@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "fr",
+    "nativeName": "Français",
+    "englishName": "French",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "Traduction d’écran propulsée par Gemini",
+    "by": "par",
+    "settings": "Paramètres",
+    "actions": {
+      "translateScreen": "Traduire l’écran",
+      "selectRegion": "Sélectionner une zone",
+      "translateSelection": "Traduire la sélection",
+      "replaceSelection": "Remplacer la sélection",
+      "fixGrammar": "Corriger la grammaire"
+    },
+    "hints": {
+      "popup": "Les résultats s’affichent dans une fenêtre près du curseur.",
+      "workflows": "Surlignez du texte, puis utilisez la consultation de sélection, le remplacement par traduction ou la correction grammaticale — chaque action colle ou affiche les résultats sans quitter votre application.",
+      "customize": "Personnalisez les raccourcis et les langues dans Paramètres.",
+      "tray": "Fermer cette fenêtre laisse Luma actif dans la barre système."
+    },
+    "footerHotkeys": "Les raccourcis restent actifs en arrière-plan"
+  },
+  "onboarding": {
+    "title": "Choisissez votre langue",
+    "subtitle": "Sélectionnez la langue de l’interface de Luma. Vous pourrez la modifier plus tard dans Paramètres.",
+    "continue": "Continuer"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "loading": "Chargement des paramètres…",
+    "back": "Retour",
+    "sections": {
+      "apiKeys": "Clés API",
+      "appearance": "Apparence",
+      "basic": "Général",
+      "hotkeys": "Raccourcis",
+      "models": "Modèles",
+      "systemPrompt": "Invite système"
+    },
+    "apiKeys": {
+      "hintBefore": "Ajoutez votre clé API Gemini ici. Les clés sont stockées localement sur cet appareil et ne sont jamais envoyées sur GitHub. Obtenez une clé sur",
+      "hintLink": "Google AI Studio",
+      "hintAfter": ".",
+      "envNote": "Une clé a été trouvée dans votre fichier .env local et sera utilisée jusqu’à ce que vous ajoutiez une clé ci-dessous.",
+      "empty": "Aucune clé API enregistrée pour le moment.",
+      "remove": "Supprimer",
+      "labelOptional": "Libellé (facultatif)",
+      "labelPlaceholder": "Perso / Travail",
+      "geminiKey": "Clé API Gemini",
+      "cancel": "Annuler",
+      "saveKey": "Enregistrer la clé",
+      "adding": "Ajout…",
+      "add": "+ Ajouter une clé API"
+    },
+    "appearance": {
+      "uiLanguage": "Langue de l’application",
+      "uiLanguageHint": "Langue des menus, boutons et paramètres dans Luma."
+    },
+    "basic": {
+      "targetLanguage": "Langue cible",
+      "targetHint": "Langue des résultats de consultation d’écran / de sélection via {targetLanguage}.",
+      "replaceLanguage": "Langue de remplacement",
+      "replaceHint": "Langue utilisée lors du remplacement du texte sélectionné sur place (raccourci Remplacer la sélection)."
+    },
+    "hotkeys": {
+      "resetAll": "Réinitialiser tous les raccourcis",
+      "hintBefore": "Cliquez sur",
+      "hintStrong": "Définir la touche",
+      "hintAfter": ", puis appuyez sur votre raccourci. Enregistrement automatique.",
+      "screen": "Traduire l’écran",
+      "region": "Sélectionner une zone",
+      "selection": "Traduire la sélection",
+      "replace": "Remplacer la sélection",
+      "grammar": "Corriger la grammaire"
+    },
+    "models": {
+      "scan": "Analyser les modèles disponibles",
+      "scanning": "Analyse…",
+      "primary": "Modèle principal",
+      "primaryPlaceholder": "Analysez les modèles pour choisir",
+      "fallback": "Modèles de secours",
+      "fallbackHint": "Essayés dans l’ordre si le modèle principal échoue.",
+      "fallbackEmpty": "Analysez les modèles pour configurer les secours."
+    },
+    "systemPrompt": {
+      "reset": "Rétablir la valeur par défaut",
+      "hint": "Personnalisez la façon dont le modèle interprète les captures d’écran. Utilisez {targetLanguage} comme espace réservé."
+    },
+    "actions": {
+      "resetAll": "Tout réinitialiser",
+      "save": "Enregistrer les paramètres",
+      "saving": "Enregistrement…"
+    },
+    "status": {
+      "modelsFound": "{count} modèle(s) disponible(s) trouvé(s).",
+      "saved": "Paramètres enregistrés.",
+      "reset": "Paramètres rétablis aux valeurs par défaut.",
+      "hotkeySaved": "Raccourci enregistré.",
+      "hotkeyReset": "Raccourci réinitialisé et enregistré.",
+      "hotkeysReset": "Tous les raccourcis ont été rétablis aux valeurs par défaut.",
+      "enterApiKey": "Saisissez une clé API avant d’ajouter.",
+      "apiKeyAdded": "Clé API ajoutée.",
+      "apiKeyActive": "Clé API active mise à jour.",
+      "apiKeyRemoved": "Clé API supprimée.",
+      "scanFailed": "Échec de l’analyse des modèles.",
+      "saveFailed": "Échec de l’enregistrement des paramètres.",
+      "hotkeySaveFailed": "Échec de l’enregistrement du raccourci.",
+      "hotkeyResetFailed": "Échec de la réinitialisation du raccourci.",
+      "hotkeysResetFailed": "Échec de la réinitialisation des raccourcis.",
+      "apiKeyAddFailed": "Échec de l’ajout de la clé API.",
+      "apiKeyActiveFailed": "Échec de la définition de la clé API active.",
+      "apiKeyRemoveFailed": "Échec de la suppression de la clé API."
+    }
+  },
+  "hotkey": {
+    "empty": "Cliquez sur « Définir la touche » pour attribuer",
+    "listening": "Écoute…",
+    "listeningHint": "Écoute… appuyez sur la combinaison (Échap pour annuler)",
+    "setKey": "Définir la touche",
+    "reset": "Réinitialiser",
+    "alreadyDefault": "Déjà la valeur par défaut",
+    "resetTitle": "Rétablir la valeur par défaut et enregistrer",
+    "recordFailed": "Impossible d’enregistrer le raccourci."
+  },
+  "popup": {
+    "translating": "Traduction…",
+    "error": "Une erreur s’est produite.",
+    "close": "Fermer",
+    "playAudio": "Lire l’audio",
+    "copyText": "Copier le texte",
+    "copied": "Copié",
+    "copy": "Copier",
+    "showLess": "Afficher moins",
+    "showAll": "Tout afficher",
+    "playPronunciation": "Lire la prononciation",
+    "copyTranslation": "Copier la traduction",
+    "inThisContext": "Dans ce contexte"
+  },
+  "region": {
+    "hint": "Faites glisser pour sélectionner une zone · Échap pour annuler",
+    "title": "Sélectionner une zone"
+  },
+  "tray": {
+    "open": "Ouvrir Luma",
+    "translateScreen": "Traduire l’écran",
+    "translateSelection": "Traduire la sélection",
+    "replaceSelection": "Remplacer la sélection",
+    "fixGrammar": "Corriger la grammaire",
+    "selectRegion": "Sélectionner une zone",
+    "quit": "Quitter"
+  },
+  "statusBar": {
+    "working": "Traitement…",
+    "replaceInProgress": "Remplacement par traduction en cours…",
+    "translatingSelection": "Traduction de la sélection…",
+    "pastingTranslation": "Collage de la traduction…",
+    "replaceComplete": "Remplacement terminé",
+    "grammarInProgress": "Vérification grammaticale en cours…",
+    "checkingGrammar": "Vérification de la grammaire…",
+    "pastingCorrection": "Collage de la correction…",
+    "grammarComplete": "Correction grammaticale terminée",
+    "noGrammarChanges": "Aucune correction grammaticale nécessaire",
+    "couldNotReadSelection": "Impossible de lire le texte sélectionné. Surlignez du texte et réessayez.",
+    "translationEmpty": "La traduction était vide, rien n’a pu être remplacé.",
+    "replaceFailed": "Impossible de remplacer le texte sélectionné.",
+    "grammarEmpty": "La correction grammaticale était vide, rien n’a pu être remplacé.",
+    "grammarFailed": "Impossible de corriger le texte sélectionné."
+  },
+  "progress": {
+    "capturing": "Capture de l’écran…",
+    "loadingPronunciation": "Chargement de la prononciation…",
+    "loadingAudio": "Chargement de l’audio…",
+    "translationFailed": "Échec de la traduction.",
+    "couldNotReadSelection": "Impossible de lire le texte sélectionné."
+  },
+  "modelSelect": {
+    "placeholder": "Sélectionner un modèle",
+    "empty": "Analysez d’abord les modèles"
+  }
+}

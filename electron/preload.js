@@ -33,6 +33,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   scanModels: () => ipcRenderer.invoke('models:scan'),
   recordHotkey: () => ipcRenderer.invoke('hotkey:record'),
   getAppVersion: () => ipcRenderer.invoke('app:getVersion'),
+  getI18nBundle: () => ipcRenderer.invoke('i18n:getBundle'),
+  getSupportedLocales: () => ipcRenderer.invoke('i18n:getLocales'),
+  setUiLocale: (payload) => ipcRenderer.invoke('i18n:setLocale', payload),
   onStatusMessage: (callback) => {
     ipcRenderer.on('status:message', (_event, data) => callback(data));
   },

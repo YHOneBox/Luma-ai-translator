@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "it",
+    "nativeName": "Italiano",
+    "englishName": "Italian",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "Traduzione dello schermo basata su Gemini",
+    "by": "di",
+    "settings": "Impostazioni",
+    "actions": {
+      "translateScreen": "Traduci schermo",
+      "selectRegion": "Seleziona area",
+      "translateSelection": "Traduci selezione",
+      "replaceSelection": "Sostituisci selezione",
+      "fixGrammar": "Correggi grammatica"
+    },
+    "hints": {
+      "popup": "I risultati appaiono in un popup vicino al cursore.",
+      "workflows": "Evidenzia il testo, poi usa la ricerca selezione, la sostituzione con traduzione o la correzione grammaticale: ogni azione incolla o mostra i risultati senza uscire dall’app.",
+      "customize": "Personalizza scorciatoie e lingue in Impostazioni.",
+      "tray": "Chiudendo questa finestra, Luma resta attivo nella barra di sistema."
+    },
+    "footerHotkeys": "Le scorciatoie restano attive in background"
+  },
+  "onboarding": {
+    "title": "Scegli la lingua",
+    "subtitle": "Seleziona la lingua dell’interfaccia di Luma. Potrai modificarla in seguito nelle Impostazioni.",
+    "continue": "Continua"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "loading": "Caricamento impostazioni…",
+    "back": "Indietro",
+    "sections": {
+      "apiKeys": "Chiavi API",
+      "appearance": "Aspetto",
+      "basic": "Base",
+      "hotkeys": "Scorciatoie",
+      "models": "Modelli",
+      "systemPrompt": "Prompt di sistema"
+    },
+    "apiKeys": {
+      "hintBefore": "Aggiungi qui la tua chiave API Gemini. Le chiavi sono memorizzate localmente su questo dispositivo e non vengono mai caricate su GitHub. Ottieni una chiave da",
+      "hintLink": "Google AI Studio",
+      "hintAfter": ".",
+      "envNote": "È stata trovata una chiave nel file .env locale e verrà usata finché non aggiungi una chiave qui sotto.",
+      "empty": "Nessuna chiave API salvata.",
+      "remove": "Rimuovi",
+      "labelOptional": "Etichetta (facoltativa)",
+      "labelPlaceholder": "Personale / Lavoro",
+      "geminiKey": "Chiave API Gemini",
+      "cancel": "Annulla",
+      "saveKey": "Salva chiave",
+      "adding": "Aggiunta in corso…",
+      "add": "+ Aggiungi chiave API"
+    },
+    "appearance": {
+      "uiLanguage": "Lingua dell’app",
+      "uiLanguageHint": "Lingua di menu, pulsanti e impostazioni in Luma."
+    },
+    "basic": {
+      "targetLanguage": "Lingua di destinazione",
+      "targetHint": "Lingua dei risultati di consultazione schermo / selezione tramite {targetLanguage}.",
+      "replaceLanguage": "Lingua di sostituzione",
+      "replaceHint": "Lingua usata quando si sostituisce il testo selezionato sul posto (scorciatoia Sostituisci selezione)."
+    },
+    "hotkeys": {
+      "resetAll": "Reimposta tutte le scorciatoie",
+      "hintBefore": "Fai clic su",
+      "hintStrong": "Imposta tasto",
+      "hintAfter": ", poi premi la scorciatoia. Salvataggio automatico.",
+      "screen": "Traduci schermo",
+      "region": "Seleziona area",
+      "selection": "Traduci selezione",
+      "replace": "Sostituisci selezione",
+      "grammar": "Correggi grammatica"
+    },
+    "models": {
+      "scan": "Scansiona modelli disponibili",
+      "scanning": "Scansione…",
+      "primary": "Modello principale",
+      "primaryPlaceholder": "Scansiona i modelli per scegliere",
+      "fallback": "Modelli di fallback",
+      "fallbackHint": "Provati in ordine se il modello principale non funziona.",
+      "fallbackEmpty": "Scansiona i modelli per configurare i fallback."
+    },
+    "systemPrompt": {
+      "reset": "Ripristina predefinito",
+      "hint": "Personalizza come il modello interpreta gli screenshot. Usa {targetLanguage} come segnaposto."
+    },
+    "actions": {
+      "resetAll": "Reimposta tutto",
+      "save": "Salva impostazioni",
+      "saving": "Salvataggio…"
+    },
+    "status": {
+      "modelsFound": "Trovati {count} modello/i disponibile/i.",
+      "saved": "Impostazioni salvate.",
+      "reset": "Impostazioni ripristinate ai valori predefiniti.",
+      "hotkeySaved": "Scorciatoia salvata.",
+      "hotkeyReset": "Scorciatoia reimpostata e salvata.",
+      "hotkeysReset": "Tutte le scorciatoie sono state ripristinate ai valori predefiniti.",
+      "enterApiKey": "Inserisci una chiave API prima di aggiungerla.",
+      "apiKeyAdded": "Chiave API aggiunta.",
+      "apiKeyActive": "Chiave API attiva aggiornata.",
+      "apiKeyRemoved": "Chiave API rimossa.",
+      "scanFailed": "Scansione dei modelli non riuscita.",
+      "saveFailed": "Salvataggio delle impostazioni non riuscito.",
+      "hotkeySaveFailed": "Salvataggio della scorciatoia non riuscito.",
+      "hotkeyResetFailed": "Reimpostazione della scorciatoia non riuscita.",
+      "hotkeysResetFailed": "Reimpostazione delle scorciatoie non riuscita.",
+      "apiKeyAddFailed": "Aggiunta della chiave API non riuscita.",
+      "apiKeyActiveFailed": "Impostazione della chiave API attiva non riuscita.",
+      "apiKeyRemoveFailed": "Rimozione della chiave API non riuscita."
+    }
+  },
+  "hotkey": {
+    "empty": "Fai clic su \"Imposta tasto\" per assegnare",
+    "listening": "In ascolto…",
+    "listeningHint": "In ascolto… premi la combinazione di tasti (Esc per annullare)",
+    "setKey": "Imposta tasto",
+    "reset": "Reimposta",
+    "alreadyDefault": "Già sul valore predefinito",
+    "resetTitle": "Ripristina il predefinito e salva",
+    "recordFailed": "Impossibile registrare la scorciatoia."
+  },
+  "popup": {
+    "translating": "Traduzione in corso…",
+    "error": "Qualcosa è andato storto.",
+    "close": "Chiudi",
+    "playAudio": "Riproduci audio",
+    "copyText": "Copia testo",
+    "copied": "Copiato",
+    "copy": "Copia",
+    "showLess": "Mostra meno",
+    "showAll": "Mostra tutto",
+    "playPronunciation": "Riproduci pronuncia",
+    "copyTranslation": "Copia traduzione",
+    "inThisContext": "In questo contesto"
+  },
+  "region": {
+    "hint": "Trascina per selezionare un’area · Esc per annullare",
+    "title": "Seleziona area"
+  },
+  "tray": {
+    "open": "Apri Luma",
+    "translateScreen": "Traduci schermo",
+    "translateSelection": "Traduci selezione",
+    "replaceSelection": "Sostituisci selezione",
+    "fixGrammar": "Correggi grammatica",
+    "selectRegion": "Seleziona area",
+    "quit": "Esci"
+  },
+  "statusBar": {
+    "working": "In corso…",
+    "replaceInProgress": "Sostituzione con traduzione in corso…",
+    "translatingSelection": "Traduzione della selezione…",
+    "pastingTranslation": "Incollaggio della traduzione…",
+    "replaceComplete": "Sostituzione completata",
+    "grammarInProgress": "Controllo grammaticale in corso…",
+    "checkingGrammar": "Verifica della grammatica…",
+    "pastingCorrection": "Incollaggio della correzione…",
+    "grammarComplete": "Correzione grammaticale completata",
+    "noGrammarChanges": "Nessuna modifica grammaticale necessaria",
+    "couldNotReadSelection": "Impossibile leggere il testo selezionato. Evidenzia il testo e riprova.",
+    "translationEmpty": "La traduzione era vuota, quindi non è stato possibile sostituire nulla.",
+    "replaceFailed": "Impossibile sostituire il testo selezionato.",
+    "grammarEmpty": "La correzione grammaticale era vuota, quindi non è stato possibile sostituire nulla.",
+    "grammarFailed": "Impossibile correggere il testo selezionato."
+  },
+  "progress": {
+    "capturing": "Acquisizione dello schermo…",
+    "loadingPronunciation": "Caricamento della pronuncia…",
+    "loadingAudio": "Caricamento dell’audio…",
+    "translationFailed": "Traduzione non riuscita.",
+    "couldNotReadSelection": "Impossibile leggere il testo selezionato."
+  },
+  "modelSelect": {
+    "placeholder": "Seleziona un modello",
+    "empty": "Scansiona prima i modelli"
+  }
+}

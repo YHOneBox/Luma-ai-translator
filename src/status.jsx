@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { I18nProvider, useI18n } from './i18n';
 import './styles.css';
 
 function StatusBar() {
-  const [message, setMessage] = useState('Working…');
+  const { t } = useI18n();
+  const [message, setMessage] = useState(t('statusBar.working'));
   const [variant, setVariant] = useState('loading');
 
   useEffect(() => {
@@ -36,4 +38,8 @@ function StatusBar() {
   );
 }
 
-createRoot(document.getElementById('root')).render(<StatusBar />);
+createRoot(document.getElementById('root')).render(
+  <I18nProvider>
+    <StatusBar />
+  </I18nProvider>
+);

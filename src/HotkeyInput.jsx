@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useI18n } from './i18n';
 
 export function formatDisplay(accelerator) {
-  if (!accelerator) return 'Click "Set key" to assign';
+  if (!accelerator) return '';
   return accelerator
     .split('+')
     .map((part) => {
@@ -25,6 +26,7 @@ export function formatDisplay(accelerator) {
 }
 
 export default function HotkeyInput({ label, value, onChange, defaultValue, onReset }) {
+  const { t } = useI18n();
   const [recording, setRecording] = useState(false);
   const [error, setError] = useState('');
 
@@ -39,7 +41,7 @@ export default function HotkeyInput({ label, value, onChange, defaultValue, onRe
         onChange(accel);
       }
     } catch (err) {
-      setError(err.message || 'Could not record hotkey.');
+      setError(err.message || t('hotkey.recordFailed'));
     } finally {
       setRecording(false);
     }
@@ -65,8 +67,8 @@ export default function HotkeyInput({ label, value, onChange, defaultValue, onRe
       <div className="hotkey-row">
         <div className={`hotkey-display ${recording ? 'recording' : ''}`}>
           {recording
-            ? 'Listening… press key combo (Esc to cancel)'
-            : formatDisplay(value)}
+            ? t('hotkey.listeningHint')
+            : formatDisplay(value) || t('hotkey.empty')}
         </div>
         <button
           type="button"
@@ -74,7 +76,7 @@ export default function HotkeyInput({ label, value, onChange, defaultValue, onRe
           onClick={startRecording}
           disabled={recording}
         >
-          {recording ? 'Listening…' : 'Set key'}
+          {recording ? t('hotkey.listening') : t('hotkey.setKey')}
         </button>
         {defaultValue && (
           <button
@@ -82,9 +84,9 @@ export default function HotkeyInput({ label, value, onChange, defaultValue, onRe
             className="btn-secondary small hotkey-reset"
             onClick={handleReset}
             disabled={isDefault || recording}
-            title={isDefault ? 'Already using default' : 'Reset to default and save'}
+            title={isDefault ? t('hotkey.alreadyDefault') : t('hotkey.resetTitle')}
           >
-            Reset
+            {t('hotkey.reset')}
           </button>
         )}
       </div>

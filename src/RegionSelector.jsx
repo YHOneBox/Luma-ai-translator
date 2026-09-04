@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { useI18n } from './i18n';
 
 export default function RegionSelector() {
+  const { t } = useI18n();
   const [selection, setSelection] = useState(null);
   const [dragging, setDragging] = useState(false);
   const startRef = useRef(null);
@@ -95,7 +97,7 @@ export default function RegionSelector() {
         />
       )}
       <div className="region-hint">
-        Drag to select a region · Esc to cancel
+        {t('region.hint')}
       </div>
     </div>
   );

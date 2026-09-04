@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { useI18n } from './i18n';
 
 const SOURCE_COLLAPSE_CHARS = 140;
 
@@ -78,6 +79,7 @@ function ChevronIcon({ up }) {
 }
 
 function PhraseCard({ text, bold, audioUrl, playing, onPlay, onCopy, copied, expand, onToggleExpand, needsExpand }) {
+  const { t } = useI18n();
   const displayText =
     !expand && needsExpand ? `${text.slice(0, SOURCE_COLLAPSE_CHARS).trim()}…` : text;
 
@@ -91,7 +93,7 @@ function PhraseCard({ text, bold, audioUrl, playing, onPlay, onCopy, copied, exp
               type="button"
               className={`icon-btn ${playing ? 'active' : ''}`}
               onClick={onPlay}
-              aria-label="Play audio"
+              aria-label={t('popup.playAudio')}
             >
               <SpeakerIcon active={playing} />
             </button>
@@ -100,15 +102,15 @@ function PhraseCard({ text, bold, audioUrl, playing, onPlay, onCopy, copied, exp
             type="button"
             className={`icon-btn ${copied ? 'active' : ''}`}
             onClick={onCopy}
-            aria-label="Copy text"
-            title={copied ? 'Copied' : 'Copy'}
+            aria-label={t('popup.copyText')}
+            title={copied ? t('popup.copied') : t('popup.copy')}
           >
             <CopyIcon />
           </button>
         </div>
         {needsExpand && (
           <button type="button" className="phrase-show-all" onClick={onToggleExpand}>
-            {expand ? 'Show less' : 'Show all'}
+            {expand ? t('popup.showLess') : t('popup.showAll')}
             <ChevronIcon up={expand} />
           </button>
         )}
@@ -118,6 +120,7 @@ function PhraseCard({ text, bold, audioUrl, playing, onPlay, onCopy, copied, exp
 }
 
 function WordResult({ data, playing, copied, onPlay, onCopy }) {
+  const { t } = useI18n();
   const displayWord =
     data.base_word || data.sourceText || data.lookupWord || data.translation || '';
   const highlightTarget = data.base_word || data.sourceText || '';
@@ -144,7 +147,7 @@ function WordResult({ data, playing, copied, onPlay, onCopy }) {
                   type="button"
                   className={`icon-btn ${playing ? 'active' : ''}`}
                   onClick={onPlay}
-                  aria-label="Play pronunciation"
+                  aria-label={t('popup.playPronunciation')}
                 >
                   <SpeakerIcon active={playing} />
                 </button>
@@ -182,7 +185,7 @@ function WordResult({ data, playing, copied, onPlay, onCopy }) {
                   type="button"
                   className={`icon-btn ${playing ? 'active' : ''}`}
                   onClick={onPlay}
-                  aria-label="Play pronunciation"
+                  aria-label={t('popup.playPronunciation')}
                 >
                   <SpeakerIcon active={playing} />
                 </button>
@@ -192,7 +195,7 @@ function WordResult({ data, playing, copied, onPlay, onCopy }) {
                 className={`icon-btn ${copied ? 'active' : ''}`}
                 onClick={onCopy}
                 aria-label="Copy translation"
-                title={copied ? 'Copied' : 'Copy translation'}
+                title={copied ? t('popup.copied') : t('popup.copyTranslation')}
               >
                 <CopyIcon />
               </button>
@@ -203,7 +206,7 @@ function WordResult({ data, playing, copied, onPlay, onCopy }) {
           )}
           {data.usage_in_context && (
             <div className="context-usage">
-              <span className="context-usage-label">In this context</span>
+              <span className="context-usage-label">{t('popup.inThisContext')}</span>
               <p className="context-text">{data.usage_in_context}</p>
             </div>
           )}
@@ -262,8 +265,9 @@ function PhraseResult({
 }
 
 export default function App() {
+  const { t } = useI18n();
   const [state, setState] = useState('loading');
-  const [message, setMessage] = useState('Translating...');
+  const [message, setMessage] = useState('');
   const [data, setData] = useState(null);
   const [playing, setPlaying] = useState(null);
   const [copied, setCopied] = useState(null);
@@ -277,13 +281,14 @@ export default function App() {
   useEffect(() => {
     document.body.classList.add('popup-page');
     document.documentElement.classList.add('popup-page');
+    setMessage(t('popup.translating'));
 
     const api = window.electronAPI;
     if (!api) return;
 
     api.onTranslationLoading(({ message: msg }) => {
       setState('loading');
-      setMessage(msg || 'Translating...');
+      setMessage(msg || t('popup.translating'));
       setData(null);
       setPlaying(null);
       setCopied(null);
@@ -297,7 +302,7 @@ export default function App() {
 
     api.onTranslationError(({ message: msg }) => {
       setState('error');
-      setMessage(msg || 'Something went wrong.');
+      setMessage(msg || t('popup.error'));
       setData(null);
     });
 
@@ -308,7 +313,7 @@ export default function App() {
         audioRef.current.pause();
       }
     };
-  }, []);
+  }, [t]);
 
   const playAudio = (url, label) => {
     if (!url) return;
@@ -345,12 +350,12 @@ export default function App() {
       <div className="popup-card">
         <header className="popup-titlebar">
           <div className="popup-titlebar-drag">
-            {state === 'loading' ? message : 'Luma'}
+            {state === 'loading' ? message : t('app.name')}
           </div>
           <button
             className="close-btn no-drag"
             onClick={closePopup}
-            aria-label="Close"
+            aria-label={t('popup.close')}
           >
             ×
           </button>
@@ -368,7 +373,7 @@ export default function App() {
             <p className="error-icon">!</p>
             <p>{message}</p>
             <button className="btn-secondary" onClick={closePopup}>
-              Close
+              {t('popup.close')}
             </button>
           </div>
         )}

@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "code": "de",
+    "nativeName": "Deutsch",
+    "englishName": "German",
+    "dir": "ltr"
+  },
+  "app": {
+    "name": "Luma",
+    "subtitle": "Bildschirmübersetzung mit Gemini",
+    "by": "von",
+    "settings": "Einstellungen",
+    "actions": {
+      "translateScreen": "Bildschirm übersetzen",
+      "selectRegion": "Bereich auswählen",
+      "translateSelection": "Auswahl übersetzen",
+      "replaceSelection": "Auswahl ersetzen",
+      "fixGrammar": "Grammatik korrigieren"
+    },
+    "hints": {
+      "popup": "Ergebnisse erscheinen in einem Popup in der Nähe des Cursors.",
+      "workflows": "Markieren Sie Text und nutzen Sie dann Auswahl-Nachschlagen, Ersatzübersetzung oder Grammatikkorrektur — jeweils mit Einfügen oder Anzeige der Ergebnisse, ohne die App zu verlassen.",
+      "customize": "Passen Sie Tastenkürzel und Sprachen in den Einstellungen an.",
+      "tray": "Beim Schließen dieses Fensters bleibt Luma im Systemtray aktiv."
+    },
+    "footerHotkeys": "Tastenkürzel bleiben im Hintergrund aktiv"
+  },
+  "onboarding": {
+    "title": "Sprache wählen",
+    "subtitle": "Wählen Sie die Sprache der Luma-Oberfläche. Sie können dies später in den Einstellungen ändern.",
+    "continue": "Weiter"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "loading": "Einstellungen werden geladen…",
+    "back": "Zurück",
+    "sections": {
+      "apiKeys": "API-Schlüssel",
+      "appearance": "Darstellung",
+      "basic": "Allgemein",
+      "hotkeys": "Tastenkürzel",
+      "models": "Modelle",
+      "systemPrompt": "System-Prompt"
+    },
+    "apiKeys": {
+      "hintBefore": "Fügen Sie hier Ihren Gemini-API-Schlüssel hinzu. Schlüssel werden lokal auf diesem Gerät gespeichert und nie zu GitHub hochgeladen. Holen Sie sich einen Schlüssel bei",
+      "hintLink": "Google AI Studio",
+      "hintAfter": ".",
+      "envNote": "In Ihrer lokalen .env-Datei wurde ein Schlüssel gefunden und wird verwendet, bis Sie unten einen Schlüssel hinzufügen.",
+      "empty": "Noch keine API-Schlüssel gespeichert.",
+      "remove": "Entfernen",
+      "labelOptional": "Bezeichnung (optional)",
+      "labelPlaceholder": "Privat / Arbeit",
+      "geminiKey": "Gemini-API-Schlüssel",
+      "cancel": "Abbrechen",
+      "saveKey": "Schlüssel speichern",
+      "adding": "Wird hinzugefügt…",
+      "add": "+ API-Schlüssel hinzufügen"
+    },
+    "appearance": {
+      "uiLanguage": "App-Sprache",
+      "uiLanguageHint": "Sprache von Menüs, Schaltflächen und Einstellungen in Luma."
+    },
+    "basic": {
+      "targetLanguage": "Zielsprache",
+      "targetHint": "Sprache für Bildschirm- / Auswahl-Nachschlageergebnisse über {targetLanguage}.",
+      "replaceLanguage": "Ersatzsprache",
+      "replaceHint": "Sprache beim Ersetzen des ausgewählten Texts an Ort und Stelle (Tastenkürzel Auswahl ersetzen)."
+    },
+    "hotkeys": {
+      "resetAll": "Alle Tastenkürzel zurücksetzen",
+      "hintBefore": "Klicken Sie auf",
+      "hintStrong": "Taste festlegen",
+      "hintAfter": " und drücken Sie dann Ihren Shortcut. Wird automatisch gespeichert.",
+      "screen": "Bildschirm übersetzen",
+      "region": "Bereich auswählen",
+      "selection": "Auswahl übersetzen",
+      "replace": "Auswahl ersetzen",
+      "grammar": "Grammatik korrigieren"
+    },
+    "models": {
+      "scan": "Verfügbare Modelle scannen",
+      "scanning": "Wird gescannt…",
+      "primary": "Primärmodell",
+      "primaryPlaceholder": "Modelle scannen zum Auswählen",
+      "fallback": "Fallback-Modelle",
+      "fallbackHint": "Werden der Reihe nach versucht, wenn das Primärmodell fehlschlägt.",
+      "fallbackEmpty": "Scannen Sie Modelle, um Fallbacks zu konfigurieren."
+    },
+    "systemPrompt": {
+      "reset": "Auf Standard zurücksetzen",
+      "hint": "Passen Sie an, wie das Modell Screenshots interpretiert. Verwenden Sie {targetLanguage} als Platzhalter."
+    },
+    "actions": {
+      "resetAll": "Alles zurücksetzen",
+      "save": "Einstellungen speichern",
+      "saving": "Wird gespeichert…"
+    },
+    "status": {
+      "modelsFound": "{count} verfügbare(s) Modell(e) gefunden.",
+      "saved": "Einstellungen gespeichert.",
+      "reset": "Einstellungen auf Standardwerte zurückgesetzt.",
+      "hotkeySaved": "Tastenkürzel gespeichert.",
+      "hotkeyReset": "Tastenkürzel zurückgesetzt und gespeichert.",
+      "hotkeysReset": "Alle Tastenkürzel auf Standardwerte zurückgesetzt.",
+      "enterApiKey": "Geben Sie vor dem Hinzufügen einen API-Schlüssel ein.",
+      "apiKeyAdded": "API-Schlüssel hinzugefügt.",
+      "apiKeyActive": "Aktiver API-Schlüssel aktualisiert.",
+      "apiKeyRemoved": "API-Schlüssel entfernt.",
+      "scanFailed": "Scannen der Modelle fehlgeschlagen.",
+      "saveFailed": "Speichern der Einstellungen fehlgeschlagen.",
+      "hotkeySaveFailed": "Speichern des Tastenkürzels fehlgeschlagen.",
+      "hotkeyResetFailed": "Zurücksetzen des Tastenkürzels fehlgeschlagen.",
+      "hotkeysResetFailed": "Zurücksetzen der Tastenkürzel fehlgeschlagen.",
+      "apiKeyAddFailed": "Hinzufügen des API-Schlüssels fehlgeschlagen.",
+      "apiKeyActiveFailed": "Festlegen des aktiven API-Schlüssels fehlgeschlagen.",
+      "apiKeyRemoveFailed": "Entfernen des API-Schlüssels fehlgeschlagen."
+    }
+  },
+  "hotkey": {
+    "empty": "Klicken Sie auf „Taste festlegen“, um zuzuweisen",
+    "listening": "Warte auf Eingabe…",
+    "listeningHint": "Warte auf Eingabe… Tastenkombination drücken (Esc zum Abbrechen)",
+    "setKey": "Taste festlegen",
+    "reset": "Zurücksetzen",
+    "alreadyDefault": "Bereits Standardwert",
+    "resetTitle": "Auf Standard zurücksetzen und speichern",
+    "recordFailed": "Tastenkürzel konnte nicht aufgezeichnet werden."
+  },
+  "popup": {
+    "translating": "Wird übersetzt…",
+    "error": "Etwas ist schiefgelaufen.",
+    "close": "Schließen",
+    "playAudio": "Audio abspielen",
+    "copyText": "Text kopieren",
+    "copied": "Kopiert",
+    "copy": "Kopieren",
+    "showLess": "Weniger anzeigen",
+    "showAll": "Alles anzeigen",
+    "playPronunciation": "Aussprache abspielen",
+    "copyTranslation": "Übersetzung kopieren",
+    "inThisContext": "In diesem Kontext"
+  },
+  "region": {
+    "hint": "Ziehen, um einen Bereich auszuwählen · Esc zum Abbrechen",
+    "title": "Bereich auswählen"
+  },
+  "tray": {
+    "open": "Luma öffnen",
+    "translateScreen": "Bildschirm übersetzen",
+    "translateSelection": "Auswahl übersetzen",
+    "replaceSelection": "Auswahl ersetzen",
+    "fixGrammar": "Grammatik korrigieren",
+    "selectRegion": "Bereich auswählen",
+    "quit": "Beenden"
+  },
+  "statusBar": {
+    "working": "Wird bearbeitet…",
+    "replaceInProgress": "Ersatzübersetzung läuft…",
+    "translatingSelection": "Auswahl wird übersetzt…",
+    "pastingTranslation": "Übersetzung wird eingefügt…",
+    "replaceComplete": "Ersetzen abgeschlossen",
+    "grammarInProgress": "Grammatikprüfung läuft…",
+    "checkingGrammar": "Grammatik wird geprüft…",
+    "pastingCorrection": "Korrektur wird eingefügt…",
+    "grammarComplete": "Grammatikkorrektur abgeschlossen",
+    "noGrammarChanges": "Keine Grammatikänderungen nötig",
+    "couldNotReadSelection": "Ausgewählter Text konnte nicht gelesen werden. Markieren Sie Text und versuchen Sie es erneut.",
+    "translationEmpty": "Die Übersetzung war leer, daher konnte nichts ersetzt werden.",
+    "replaceFailed": "Ausgewählter Text konnte nicht ersetzt werden.",
+    "grammarEmpty": "Die Grammatikkorrektur war leer, daher konnte nichts ersetzt werden.",
+    "grammarFailed": "Ausgewählter Text konnte nicht korrigiert werden."
+  },
+  "progress": {
+    "capturing": "Bildschirm wird erfasst…",
+    "loadingPronunciation": "Aussprache wird geladen…",
+    "loadingAudio": "Audio wird geladen…",
+    "translationFailed": "Übersetzung fehlgeschlagen.",
+    "couldNotReadSelection": "Ausgewählter Text konnte nicht gelesen werden."
+  },
+  "modelSelect": {
+    "placeholder": "Modell auswählen",
+    "empty": "Zuerst Modelle scannen"
+  }
+}
