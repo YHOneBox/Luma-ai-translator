@@ -90,6 +90,7 @@ function validateHotkeys(settings) {
     { name: 'Translate Selection', value: settings.hotkeySelection },
     { name: 'Replace Selection', value: settings.hotkeyReplace },
     { name: 'Fix Grammar', value: settings.hotkeyGrammar },
+    { name: 'Dictionary', value: settings.hotkeyDictionary },
   ];
 
   const active = entries.filter((e) => e.value);

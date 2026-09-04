@@ -16,6 +16,7 @@ export default defineConfig({
         popup: resolve(__dirname, 'src/popup.html'),
         region: resolve(__dirname, 'src/region.html'),
         status: resolve(__dirname, 'src/status.html'),
+        dictionary: resolve(__dirname, 'src/dictionary.html'),
       },
     },
   },

@@ -15,11 +15,12 @@
       "selectRegion": "Select Region",
       "translateSelection": "Translate Selection",
       "replaceSelection": "Replace Selection",
-      "fixGrammar": "Fix Grammar"
+      "fixGrammar": "Fix Grammar",
+      "dictionary": "Dictionary"
     },
     "hints": {
       "popup": "Results appear in a popup near your cursor.",
-      "workflows": "Highlight text, then use selection lookup, replace translation, or fix grammar — each pastes or shows results without leaving your app.",
+      "workflows": "Highlight text, then use selection lookup, replace translation, or fix grammar — each pastes or shows results without leaving your app. Press the dictionary hotkey to type a word or sentence to look up.",
       "customize": "Customize hotkeys and languages in Settings.",
       "tray": "Closing this window keeps Luma running in the system tray."
     },
@@ -76,7 +77,8 @@
       "region": "Select region",
       "selection": "Translate selection",
       "replace": "Replace selection",
-      "grammar": "Fix grammar"
+      "grammar": "Fix grammar",
+      "dictionary": "Dictionary"
     },
     "models": {
       "scan": "Scan Available Models",
@@ -151,8 +153,17 @@
     "translateSelection": "Translate Selection",
     "replaceSelection": "Replace Selection",
     "fixGrammar": "Fix Grammar",
+    "dictionary": "Dictionary",
     "selectRegion": "Select Region",
     "quit": "Quit"
+  },
+  "dictionary": {
+    "title": "Dictionary",
+    "placeholder": "Type a word or sentence…",
+    "lookup": "Look up",
+    "lookingUp": "Looking up…",
+    "idleHint": "Type a word or sentence, then press Enter to look it up.",
+    "lookupFailed": "Lookup failed."
   },
   "statusBar": {
     "working": "Working…",

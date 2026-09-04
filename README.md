@@ -15,6 +15,7 @@ A desktop translation app built with **Electron + React**. It runs in the backgr
   - [3. Selection Translate](#3-selection-translate)
   - [4. Replace Selection](#4-replace-selection)
   - [5. Fix Grammar](#5-fix-grammar)
+  - [6. Dictionary](#6-dictionary)
 - [Result Popup](#result-popup)
   - [Word Layout (single word)](#word-layout-single-word)
   - [Phrase Layout (sentence / paragraph)](#phrase-layout-sentence--paragraph)
@@ -177,6 +178,21 @@ Set the destination language under **Settings → Basic → Replace language**.
 4. The status bar shows **Grammar fix complete**, **No grammar changes needed**, or an error if correction/replace failed.
 
 This works for **any language** (and mixed-language text). It does **not** translate — it only improves correctness in the original language(s).
+
+---
+
+### 6. Dictionary
+
+**Hotkey:** `Alt+D` (customizable)
+
+**Step-by-step:**
+
+1. Press `Alt+D` (or click **Dictionary** in the main window / tray).
+2. A popup opens **near your cursor**. Type a word or sentence you want to look up.
+3. Press **Enter** (or click **Look up**).
+4. Results use the same layouts as selection translate: **word** detail view for a single word, or **phrase** cards for longer text.
+
+Press `Esc` or the × button to close the dictionary popup.
 
 ---
 
@@ -369,7 +385,8 @@ Get a free key from [Google AI Studio](https://aistudio.google.com/apikey).
 | `Alt+X` | Translate **highlighted text** (selection lookup) |
 | `Alt+R` | **Replace** highlighted text with a translation |
 | `Alt+G` | **Fix grammar** of highlighted text (any language) and replace it |
-| `Esc` | Cancel region selection |
+| `Alt+D` | Open **Dictionary** near the cursor to type a word/sentence and look it up |
+| `Esc` | Cancel region selection / close dictionary popup |
 
 All hotkeys can be changed in **Settings**.
 
@@ -634,7 +651,8 @@ Luma/
 │   └── hotkey-utils.js        # Hotkey validation and formatting
 ├── src/                       # Renderer process (React + Vite)
 │   ├── main.jsx / MainApp.jsx # Main window UI
-│   ├── App.jsx                # Translation result popup UI
+│   ├── App.jsx                # Translation result popup UI (shared Word/Phrase views)
+│   ├── dictionary.html/.jsx   # Dictionary lookup popup near cursor
 │   ├── RegionSelector.jsx     # Region selection overlay
 │   ├── Settings.jsx           # Settings page
 │   ├── HotkeyInput.jsx        # Hotkey picker component
@@ -698,6 +716,9 @@ Luma/
 | `translate:selection` | Trigger selection translate |
 | `translate:replace` | Translate selection and paste it back in place |
 | `translate:grammar` | Correct grammar of selection and paste it back |
+| `dictionary:show` | Open dictionary popup near the cursor |
+| `dictionary:close` | Close dictionary popup |
+| `dictionary:lookup` | Look up typed text (returns enriched word/phrase result) |
 | `popup:close` | Close result popup |
 | `settings:save` | Save settings and re-register hotkeys |
 | `hotkey:record` | Record a new hotkey in Settings |

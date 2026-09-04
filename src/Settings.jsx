@@ -143,6 +143,7 @@ export default function Settings({ onBack }) {
       hotkeySelection: defaults.hotkeySelection,
       hotkeyReplace: defaults.hotkeyReplace,
       hotkeyGrammar: defaults.hotkeyGrammar,
+      hotkeyDictionary: defaults.hotkeyDictionary,
     };
 
     try {
@@ -442,6 +443,13 @@ export default function Settings({ onBack }) {
             defaultValue={defaults?.hotkeyGrammar}
             onChange={(v) => saveHotkey('hotkeyGrammar', v)}
             onReset={() => resetHotkey('hotkeyGrammar', defaults?.hotkeyGrammar)}
+          />
+          <HotkeyInput
+            label={t('settings.hotkeys.dictionary')}
+            value={settings.hotkeyDictionary}
+            defaultValue={defaults?.hotkeyDictionary}
+            onChange={(v) => saveHotkey('hotkeyDictionary', v)}
+            onReset={() => resetHotkey('hotkeyDictionary', defaults?.hotkeyDictionary)}
           />
         </section>
 

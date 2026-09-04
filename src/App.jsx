@@ -119,7 +119,7 @@ function PhraseCard({ text, bold, audioUrl, playing, onPlay, onCopy, copied, exp
   );
 }
 
-function WordResult({ data, playing, copied, onPlay, onCopy }) {
+export function WordResult({ data, playing, copied, onPlay, onCopy }) {
   const { t } = useI18n();
   const displayWord =
     data.base_word || data.sourceText || data.lookupWord || data.translation || '';
@@ -216,7 +216,7 @@ function WordResult({ data, playing, copied, onPlay, onCopy }) {
   );
 }
 
-function PhraseResult({
+export function PhraseResult({
   data,
   playing,
   copied,

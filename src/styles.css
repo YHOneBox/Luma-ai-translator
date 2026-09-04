@@ -965,7 +965,10 @@ html.popup-page #root {
 .no-drag,
 .icon-btn,
 .close-btn,
-.btn-secondary {
+.btn-secondary,
+.btn-primary,
+.dictionary-search,
+.dictionary-input {
   -webkit-app-region: no-drag;
   app-region: no-drag;
 }
@@ -1415,4 +1418,67 @@ html.status-page #root {
     transform: rotate(360deg);
   }
 }
+
+/* ── Dictionary popup ── */
+
+.dictionary-card {
+  min-height: 0;
+}
+
+.dictionary-search {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.dictionary-input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #f0f0f5;
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.dictionary-input:focus {
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.18);
+}
+
+.dictionary-input::placeholder {
+  color: #777;
+}
+
+.dictionary-lookup-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.dictionary-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 4px 0 8px;
+}
+
+.dictionary-idle {
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.dictionary-idle .hint {
+  color: #888;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
 

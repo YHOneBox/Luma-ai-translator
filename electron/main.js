@@ -60,6 +60,7 @@ const ICON_PATH = path.join(__dirname, '../assets/logo.png');
 let tray = null;
 let mainWindow = null;
 let popupWindow = null;
+let dictionaryWindow = null;
 let regionWindow = null;
 let statusWindow = null;
 let statusBarCloseTimer = null;
@@ -92,6 +93,7 @@ function rebuildTrayMenu() {
     { label: t('tray.translateSelection'), click: () => startSelectionTranslation() },
     { label: t('tray.replaceSelection'), click: () => startReplaceSelectionTranslation() },
     { label: t('tray.fixGrammar'), click: () => startGrammarCorrectionSelection() },
+    { label: t('tray.dictionary'), click: () => openDictionaryWindow() },
     { label: t('tray.selectRegion'), click: () => openRegionSelector() },
     { type: 'separator' },
     {
@@ -223,6 +225,100 @@ function createPopupWindow() {
   });
 
   return popupWindow;
+}
+
+function placeNearCursor(width, height) {
+  const cursor = screen.getCursorScreenPoint();
+  const display = screen.getDisplayNearestPoint(cursor);
+  let x = cursor.x + 16;
+  let y = cursor.y + 16;
+
+  if (x + width > display.bounds.x + display.bounds.width) {
+    x = display.bounds.x + display.bounds.width - width - 16;
+  }
+  if (y + height > display.bounds.y + display.bounds.height) {
+    y = display.bounds.y + display.bounds.height - height - 16;
+  }
+
+  return { x, y };
+}
+
+function openDictionaryWindow() {
+  const popupWidth = 460;
+  const popupHeight = 560;
+  const { x, y } = placeNearCursor(popupWidth, popupHeight);
+
+  if (dictionaryWindow && !dictionaryWindow.isDestroyed()) {
+    dictionaryWindow.setBounds({ x, y, width: popupWidth, height: popupHeight });
+    dictionaryWindow.show();
+    dictionaryWindow.focus();
+    dictionaryWindow.webContents.send('dictionary:focus');
+    return dictionaryWindow;
+  }
+
+  dictionaryWindow = new BrowserWindow({
+    width: popupWidth,
+    height: popupHeight,
+    minWidth: 340,
+    minHeight: 380,
+    x,
+    y,
+    frame: false,
+    transparent: true,
+    resizable: true,
+    movable: true,
+    ...(process.platform === 'win32' ? { thickFrame: true } : {}),
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    focusable: true,
+    show: false,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  });
+
+  dictionaryWindow.loadURL(getPageUrl('dictionary'));
+
+  dictionaryWindow.once('ready-to-show', () => {
+    if (dictionaryWindow && !dictionaryWindow.isDestroyed()) {
+      dictionaryWindow.show();
+      dictionaryWindow.focus();
+      dictionaryWindow.webContents.send('dictionary:focus');
+    }
+  });
+
+  dictionaryWindow.on('closed', () => {
+    dictionaryWindow = null;
+  });
+
+  return dictionaryWindow;
+}
+
+async function runDictionaryLookup(text) {
+  const trimmed = String(text || '').trim();
+  if (!trimmed) {
+    throw new Error(t('dictionary.lookupFailed'));
+  }
+
+  const result = await translateText(trimmed);
+  const layoutMode = resolveLayoutMode(result);
+  let enriched;
+
+  if (layoutMode === 'word') {
+    enriched = await enrichWithPronunciation(result);
+  } else {
+    const { targetLanguage } = loadSettings();
+    enriched = await enrichPhraseResult(result, targetLanguage);
+  }
+
+  return {
+    ...enriched,
+    layoutMode: enriched.layoutMode || layoutMode,
+    isSingleWord: layoutMode === 'word' && Boolean(enriched.isSingleWord),
+    lookupWord: enriched.lookupWord || resolveLookupWord(enriched) || undefined,
+  };
 }
 
 function openRegionSelector() {
@@ -533,6 +629,7 @@ function registerHotkeys() {
     { accel: settings.hotkeySelection, action: () => startSelectionTranslation() },
     { accel: settings.hotkeyReplace, action: () => startReplaceSelectionTranslation() },
     { accel: settings.hotkeyGrammar, action: () => startGrammarCorrectionSelection() },
+    { accel: settings.hotkeyDictionary, action: () => openDictionaryWindow() },
   ];
 
   const failed = [];
@@ -554,6 +651,19 @@ function setupIpc() {
   ipcMain.on('translate:selection', () => startSelectionTranslation());
   ipcMain.on('translate:replace', () => startReplaceSelectionTranslation());
   ipcMain.on('translate:grammar', () => startGrammarCorrectionSelection());
+  ipcMain.on('dictionary:show', () => openDictionaryWindow());
+  ipcMain.on('dictionary:close', () => {
+    if (dictionaryWindow && !dictionaryWindow.isDestroyed()) {
+      dictionaryWindow.close();
+    }
+  });
+  ipcMain.handle('dictionary:lookup', async (_event, text) => {
+    try {
+      return await runDictionaryLookup(text);
+    } catch (err) {
+      throw new Error(err.message || t('dictionary.lookupFailed'));
+    }
+  });
 
   ipcMain.on('popup:close', () => {
     if (popupWindow && !popupWindow.isDestroyed()) {

@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   translateSelection: () => ipcRenderer.send('translate:selection'),
   translateReplace: () => ipcRenderer.send('translate:replace'),
   translateGrammar: () => ipcRenderer.send('translate:grammar'),
+  showDictionary: () => ipcRenderer.send('dictionary:show'),
   onTranslationLoading: (callback) => {
     ipcRenderer.on('translation:loading', (_event, data) => callback(data));
   },
@@ -19,6 +20,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('translation:pronunciation', (_event, data) => callback(data));
   },
   closePopup: () => ipcRenderer.send('popup:close'),
+  closeDictionary: () => ipcRenderer.send('dictionary:close'),
+  dictionaryLookup: (text) => ipcRenderer.invoke('dictionary:lookup', text),
+  onDictionaryFocus: (callback) => {
+    const handler = () => callback();
+    ipcRenderer.on('dictionary:focus', handler);
+    return () => ipcRenderer.removeListener('dictionary:focus', handler);
+  },
   openDictionary: (url) => ipcRenderer.send('dictionary:open', url),
   regionComplete: (region) => ipcRenderer.send('region:complete', region),
   regionCancel: () => ipcRenderer.send('region:cancel'),

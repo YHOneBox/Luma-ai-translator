@@ -15,6 +15,7 @@ export default function MainApp() {
     selection: 'Alt + X',
     replace: 'Alt + R',
     grammar: 'Alt + G',
+    dictionary: 'Alt + D',
   });
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function MainApp() {
         selection: formatDisplay(s.hotkeySelection),
         replace: formatDisplay(s.hotkeyReplace),
         grammar: formatDisplay(s.hotkeyGrammar),
+        dictionary: formatDisplay(s.hotkeyDictionary),
       });
     });
   }, [view, ready]);
@@ -54,6 +56,10 @@ export default function MainApp() {
 
   const translateGrammar = useCallback(() => {
     window.electronAPI?.translateGrammar();
+  }, []);
+
+  const showDictionary = useCallback(() => {
+    window.electronAPI?.showDictionary();
   }, []);
 
   if (needsOnboarding === null || !ready) {
@@ -141,6 +147,13 @@ export default function MainApp() {
           <span className="action-text">
             <strong>{t('app.actions.fixGrammar')}</strong>
             <small>{hotkeys.grammar}</small>
+          </span>
+        </button>
+        <button className="action-btn" onClick={showDictionary}>
+          <span className="action-icon">⌕</span>
+          <span className="action-text">
+            <strong>{t('app.actions.dictionary')}</strong>
+            <small>{hotkeys.dictionary}</small>
           </span>
         </button>
       </section>
