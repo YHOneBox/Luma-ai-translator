@@ -26,7 +26,7 @@ const {
   nativeImage,
 } = require('electron');
 const { captureScreen } = require('./capture');
-const { translateScreenshot, translateText, translateForReplace } = require('./gemini');
+const { translateScreenshot, translateText, translateForReplace, correctGrammarForReplace } = require('./gemini');
 const { getSelectedText, replaceSelectedText } = require('./selection');
 const {
   loadSettings,
@@ -85,6 +85,7 @@ function createTray() {
     { label: 'Translate Screen', click: () => startTranslation(null) },
     { label: 'Translate Selection', click: () => startSelectionTranslation() },
     { label: 'Replace Selection', click: () => startReplaceSelectionTranslation() },
+    { label: 'Fix Grammar', click: () => startGrammarCorrectionSelection() },
     { label: 'Select Region', click: () => openRegionSelector() },
     { type: 'separator' },
     {
@@ -461,6 +462,52 @@ async function startReplaceSelectionTranslation() {
   }
 }
 
+async function startGrammarCorrectionSelection() {
+  let text;
+
+  try {
+    text = await getSelectedText();
+  } catch (err) {
+    await showStatusBar(
+      err.message || 'Could not read selected text. Highlight text and try again.',
+      { variant: 'error', autoCloseMs: 4500 }
+    );
+    return;
+  }
+
+  try {
+    await showStatusBar('Grammar check in progress…', { variant: 'loading' });
+
+    const result = await correctGrammarForReplace(text, (message) => {
+      showStatusBar(message || 'Checking grammar…', { variant: 'loading' });
+    });
+
+    if (!result?.correctedText?.trim()) {
+      throw new Error('Grammar correction was empty, so nothing could be replaced.');
+    }
+
+    await showStatusBar('Pasting correction…', { variant: 'loading' });
+    closeStatusBar();
+    await replaceSelectedText(result.correctedText);
+
+    const unchanged =
+      result.correctedText.trim() === String(text || '').trim();
+
+    await showStatusBar(
+      unchanged ? 'No grammar changes needed' : 'Grammar fix complete',
+      {
+        variant: 'success',
+        autoCloseMs: 2500,
+      }
+    );
+  } catch (err) {
+    await showStatusBar(
+      err.message || 'Could not correct the selected text.',
+      { variant: 'error', autoCloseMs: 4500 }
+    );
+  }
+}
+
 function registerHotkeys() {
   globalShortcut.unregisterAll();
 
@@ -470,6 +517,7 @@ function registerHotkeys() {
     { accel: settings.hotkeyRegion, action: () => openRegionSelector() },
     { accel: settings.hotkeySelection, action: () => startSelectionTranslation() },
     { accel: settings.hotkeyReplace, action: () => startReplaceSelectionTranslation() },
+    { accel: settings.hotkeyGrammar, action: () => startGrammarCorrectionSelection() },
   ];
 
   const failed = [];
@@ -490,6 +538,7 @@ function setupIpc() {
   ipcMain.on('translate:region', () => openRegionSelector());
   ipcMain.on('translate:selection', () => startSelectionTranslation());
   ipcMain.on('translate:replace', () => startReplaceSelectionTranslation());
+  ipcMain.on('translate:grammar', () => startGrammarCorrectionSelection());
 
   ipcMain.on('popup:close', () => {
     if (popupWindow && !popupWindow.isDestroyed()) {

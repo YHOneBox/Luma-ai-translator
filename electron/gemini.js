@@ -467,10 +467,98 @@ async function translateForReplace(text, onProgress) {
   return result;
 }
 
+function resolveGrammarSystemPrompt() {
+  return `You are an expert multilingual writing editor for native and non-native speakers.
+
+Detect the language of the source text, then correct grammar, spelling, punctuation, word choice, and awkward phrasing IN THAT SAME LANGUAGE.
+
+Rules:
+- Work for ANY language (English, Chinese, Japanese, Korean, Spanish, French, mixed text, etc.).
+- Always keep the same language as the source. Never translate into another language.
+- If the text mixes languages, correct each part in its own language and preserve the mix.
+- Keep the original meaning, tone, register, and intent.
+- Prefer the smallest natural edits that make the text correct and fluent for that language.
+- Preserve paragraph breaks, line breaks, list structure, names, numbers, and formatting intent.
+- Do NOT add explanations, notes, labels, or commentary.
+- If the text is already correct, return it unchanged.
+- source_text must match the original input exactly.
+- corrected_text must contain ONLY the corrected text in the original language(s).
+- source_language should be a short language name or BCP-47 code for the primary language detected.`;
+}
+
+const GRAMMAR_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    source_text: {
+      type: Type.STRING,
+      description: 'The original text exactly as provided.',
+    },
+    source_language: {
+      type: Type.STRING,
+      description:
+        'Detected primary language of the source text, e.g. English, Chinese (Traditional), Japanese, or en / zh-TW / ja.',
+    },
+    corrected_text: {
+      type: Type.STRING,
+      description:
+        'Grammar-corrected text in the SAME language as the source. Preserve paragraph breaks. Do not translate. Do not add commentary.',
+    },
+  },
+  required: ['source_text', 'source_language', 'corrected_text'],
+};
+
+async function correctGrammarForReplace(text, onProgress) {
+  const settings = loadSettings();
+  const apiKey = resolveApiKey(settings);
+  if (!apiKey) {
+    throw new Error('No Gemini API key configured. Open Settings → API Keys to add one.');
+  }
+
+  const trimmed = String(text || '').trim();
+  if (!trimmed) {
+    throw new Error('No text selected.');
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+  onProgress?.('Checking grammar…');
+
+  const { parsed, model } = await generateWithFallback(
+    ai,
+    settings,
+    resolveGrammarSystemPrompt(),
+    [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: `Detect the language of the following text and correct its grammar and fluency in that same language. Do not translate.\n\n${trimmed}`,
+          },
+        ],
+      },
+    ],
+    GRAMMAR_SCHEMA,
+    onProgress,
+    PHRASE_TIMEOUT_MS
+  );
+
+  const corrected = String(parsed.corrected_text || '').trim();
+  if (!corrected) {
+    throw new Error('Grammar correction returned empty text.');
+  }
+
+  return {
+    source_text: parsed.source_text?.trim() || trimmed,
+    source_language: parsed.source_language?.trim() || '',
+    correctedText: corrected,
+    modelUsed: model,
+  };
+}
+
 module.exports = {
   translateScreenshot,
   translateText,
   translateForReplace,
+  correctGrammarForReplace,
   detectInputMode,
   WORD_TIMEOUT_MS,
   PHRASE_TIMEOUT_MS,

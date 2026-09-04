@@ -2,7 +2,7 @@
 
 A desktop translation app built with **Electron + React**. It runs in the background and lets you translate text from your screen using **Google Gemini** — no separate OCR step required. Press a global hotkey, and a popup near your cursor shows results in one of two layouts: a **dictionary-style view** for single words, or a **source + translation card view** for sentences and paragraphs.
 
-**Author:** [Yi-Ho Chang](https://yhonebox.github.io/e-portfolio/)
+**Author:** [Yi-Ho Chang](https://yhonebox.github.io/yh/)
 
 ---
 
@@ -14,6 +14,7 @@ A desktop translation app built with **Electron + React**. It runs in the backgr
   - [2. Region Translate](#2-region-translate)
   - [3. Selection Translate](#3-selection-translate)
   - [4. Replace Selection](#4-replace-selection)
+  - [5. Fix Grammar](#5-fix-grammar)
 - [Result Popup](#result-popup)
   - [Word Layout (single word)](#word-layout-single-word)
   - [Phrase Layout (sentence / paragraph)](#phrase-layout-sentence--paragraph)
@@ -161,6 +162,21 @@ Highlight text → Alt+X
 4. A bottom status bar shows progress, then **Replace complete** (or an error if the text could not be replaced). No result popup is shown.
 
 Set the destination language under **Settings → Basic → Replace language**.
+
+---
+
+### 5. Fix Grammar
+
+**Hotkey:** `Alt+G` (customizable)
+
+**Step-by-step:**
+
+1. **Highlight text** in any app (email, chat, docs, etc.).
+2. Press `Alt+G` (or click **Fix Grammar**).
+3. Luma detects the language, checks grammar/spelling/fluency in that same language, then pastes the corrected text over your selection.
+4. The status bar shows **Grammar fix complete**, **No grammar changes needed**, or an error if correction/replace failed.
+
+This works for **any language** (and mixed-language text). It does **not** translate — it only improves correctness in the original language(s).
 
 ---
 
@@ -351,6 +367,7 @@ Get a free key from [Google AI Studio](https://aistudio.google.com/apikey).
 | `Alt+C` | **Select a region** and translate |
 | `Alt+X` | Translate **highlighted text** (selection lookup) |
 | `Alt+R` | **Replace** highlighted text with a translation |
+| `Alt+G` | **Fix grammar** of highlighted text (any language) and replace it |
 | `Esc` | Cancel region selection |
 
 All hotkeys can be changed in **Settings**.
@@ -440,7 +457,7 @@ npm run dist:portable
 Output:
 
 ```
-release/Luma-1.0.0-Portable.exe
+release/Luma-1.0.5-Portable.exe
 ```
 
 Other build commands:
@@ -679,6 +696,7 @@ Luma/
 | `translate:region` | Open region selector |
 | `translate:selection` | Trigger selection translate |
 | `translate:replace` | Translate selection and paste it back in place |
+| `translate:grammar` | Correct grammar of selection and paste it back |
 | `popup:close` | Close result popup |
 | `settings:save` | Save settings and re-register hotkeys |
 | `hotkey:record` | Record a new hotkey in Settings |

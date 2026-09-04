@@ -28,6 +28,7 @@ const DEFAULT_SETTINGS = {
   hotkeyRegion: 'Alt+C',
   hotkeySelection: 'Alt+X',
   hotkeyReplace: 'Alt+R',
+  hotkeyGrammar: 'Alt+G',
   apiKeys: [],
   activeApiKeyId: null,
 };
@@ -79,6 +80,7 @@ function migrateSettings(settings) {
     'hotkeyRegion',
     'hotkeySelection',
     'hotkeyReplace',
+    'hotkeyGrammar',
   ]) {
     if (!migrated[key]) {
       migrated[key] = DEFAULT_SETTINGS[key];

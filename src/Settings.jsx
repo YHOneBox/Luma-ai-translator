@@ -137,6 +137,7 @@ export default function Settings({ onBack }) {
       hotkeyRegion: defaults.hotkeyRegion,
       hotkeySelection: defaults.hotkeySelection,
       hotkeyReplace: defaults.hotkeyReplace,
+      hotkeyGrammar: defaults.hotkeyGrammar,
     };
 
     try {
@@ -408,6 +409,13 @@ export default function Settings({ onBack }) {
             defaultValue={defaults?.hotkeyReplace}
             onChange={(v) => saveHotkey('hotkeyReplace', v)}
             onReset={() => resetHotkey('hotkeyReplace', defaults?.hotkeyReplace)}
+          />
+          <HotkeyInput
+            label="Fix grammar"
+            value={settings.hotkeyGrammar}
+            defaultValue={defaults?.hotkeyGrammar}
+            onChange={(v) => saveHotkey('hotkeyGrammar', v)}
+            onReset={() => resetHotkey('hotkeyGrammar', defaults?.hotkeyGrammar)}
           />
         </section>
 

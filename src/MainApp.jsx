@@ -10,6 +10,7 @@ export default function MainApp() {
     region: 'Alt + C',
     selection: 'Alt + X',
     replace: 'Alt + R',
+    grammar: 'Alt + G',
   });
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function MainApp() {
         region: formatDisplay(s.hotkeyRegion),
         selection: formatDisplay(s.hotkeySelection),
         replace: formatDisplay(s.hotkeyReplace),
+        grammar: formatDisplay(s.hotkeyGrammar),
       });
     });
   }, [view]);
@@ -45,6 +47,10 @@ export default function MainApp() {
     window.electronAPI?.translateReplace();
   }, []);
 
+  const translateGrammar = useCallback(() => {
+    window.electronAPI?.translateGrammar();
+  }, []);
+
   if (view === 'settings') {
     return <Settings onBack={() => setView('home')} />;
   }
@@ -59,11 +65,11 @@ export default function MainApp() {
           <p className="author-credit">
             by{' '}
             <a
-              href="https://yhonebox.github.io/e-portfolio/"
+              href="https://yhonebox.github.io/yh/"
               onClick={(e) => {
                 e.preventDefault();
                 window.electronAPI?.openDictionary(
-                  'https://yhonebox.github.io/e-portfolio/'
+                  'https://yhonebox.github.io/yh/'
                 );
               }}
             >
@@ -111,17 +117,24 @@ export default function MainApp() {
             <small>{hotkeys.replace}</small>
           </span>
         </button>
+        <button className="action-btn" onClick={translateGrammar}>
+          <span className="action-icon">✎</span>
+          <span className="action-text">
+            <strong>Fix Grammar</strong>
+            <small>{hotkeys.grammar}</small>
+          </span>
+        </button>
       </section>
 
       <section className="content">
         <div className="idle-state">
           <p>Results appear in a popup near your cursor.</p>
           <p className="hint">
-            Highlight text, then press the selection hotkey for a dictionary-style
-            lookup, or the replace hotkey to paste a translation back in place.
+            Highlight text, then use selection lookup, replace translation, or
+            fix grammar — each pastes or shows results without leaving your app.
           </p>
           <p className="hint">
-            Customize hotkeys and replace language in Settings.
+            Customize hotkeys and languages in Settings.
           </p>
           <p className="hint">
             Closing this window keeps Luma running in the system tray.
@@ -139,11 +152,11 @@ export default function MainApp() {
         Hotkeys stay active in the background
         <span className="footer-sep">·</span>
         <a
-          href="https://yhonebox.github.io/e-portfolio/"
+          href="https://yhonebox.github.io/yh/"
           onClick={(e) => {
             e.preventDefault();
             window.electronAPI?.openDictionary(
-              'https://yhonebox.github.io/e-portfolio/'
+              'https://yhonebox.github.io/yh/'
             );
           }}
         >

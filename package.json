@@ -1,6 +1,6 @@
 {
   "name": "luma",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Luma — desktop translation app that captures screen text and translates via Gemini",
   "main": "electron/main.js",
   "scripts": {
@@ -16,7 +16,7 @@
   },
   "author": {
     "name": "Yi-Ho Chang",
-    "url": "https://yhonebox.github.io/e-portfolio/"
+    "url": "https://yhonebox.github.io/yh/"
   },
   "license": "MIT",
   "dependencies": {
@@ -52,7 +52,9 @@
       "target": [
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
@@ -61,7 +63,10 @@
     },
     "mac": {
       "icon": "build/icon.png",
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "identity": null,
       "gatekeeperAssess": false,
       "hardenedRuntime": false,
@@ -69,7 +74,10 @@
     },
     "linux": {
       "icon": "build/icon.png",
-      "target": ["AppImage", "zip"],
+      "target": [
+        "AppImage",
+        "zip"
+      ],
       "category": "Utility",
       "maintainer": "Luma"
     }

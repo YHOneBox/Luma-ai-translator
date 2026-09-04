@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   translateRegion: () => ipcRenderer.send('translate:region'),
   translateSelection: () => ipcRenderer.send('translate:selection'),
   translateReplace: () => ipcRenderer.send('translate:replace'),
+  translateGrammar: () => ipcRenderer.send('translate:grammar'),
   onTranslationLoading: (callback) => {
     ipcRenderer.on('translation:loading', (_event, data) => callback(data));
   },
