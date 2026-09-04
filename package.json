@@ -1,7 +1,7 @@
 {
-  "name": "ai-translate",
-  "version": "1.0.0",
-  "description": "Desktop translation app — capture screen text and translate via Gemini",
+  "name": "luma",
+  "version": "1.0.3",
+  "description": "Luma — desktop translation app that captures screen text and translates via Gemini",
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
@@ -14,7 +14,10 @@
     "dist:mac": "npm run build && electron-builder --mac dmg zip --publish never",
     "dist:linux": "npm run build && electron-builder --linux AppImage zip --publish never"
   },
-  "author": "",
+  "author": {
+    "name": "Yi-Ho Chang",
+    "url": "https://yhonebox.github.io/e-portfolio/"
+  },
   "license": "MIT",
   "dependencies": {
     "@google/genai": "^1.0.0",
@@ -31,8 +34,8 @@
     "wait-on": "^8.0.1"
   },
   "build": {
-    "appId": "com.aitranslate.app",
-    "productName": "AI Translate",
+    "appId": "com.luma.app",
+    "productName": "Luma",
     "publish": null,
     "files": [
       "dist/**/*",
@@ -43,7 +46,7 @@
     "directories": {
       "output": "release"
     },
-    "artifactName": "AI-Translate-${version}-${os}-${arch}.${ext}",
+    "artifactName": "Luma-${version}-${os}-${arch}.${ext}",
     "win": {
       "icon": "assets/logo.png",
       "target": [
@@ -54,7 +57,7 @@
       ]
     },
     "portable": {
-      "artifactName": "AI-Translate-${version}-Portable.exe"
+      "artifactName": "Luma-${version}-Portable.exe"
     },
     "mac": {
       "icon": "build/icon.png",
@@ -68,7 +71,7 @@
       "icon": "build/icon.png",
       "target": ["AppImage", "zip"],
       "category": "Utility",
-      "maintainer": "AI Translate"
+      "maintainer": "Luma"
     }
   }
 }

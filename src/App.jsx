@@ -345,7 +345,7 @@ export default function App() {
       <div className="popup-card">
         <header className="popup-titlebar">
           <div className="popup-titlebar-drag">
-            {state === 'loading' ? message : 'AI Translate'}
+            {state === 'loading' ? message : 'Luma'}
           </div>
           <button
             className="close-btn no-drag"

@@ -23,7 +23,7 @@ function configureAppPaths() {
     return null;
   }
 
-  dataRoot = path.join(portableExeDir, 'AI-Translate-Data');
+  dataRoot = path.join(portableExeDir, 'Luma-Data');
 
   app.setPath('userData', path.join(dataRoot, 'userData'));
   app.setPath('cache', path.join(dataRoot, 'cache'));
@@ -35,8 +35,8 @@ function configureAppPaths() {
   if (!fs.existsSync(readmePath)) {
     fs.writeFileSync(
       readmePath,
-      `# AI Translate — local data folder
-# Safe to delete this entire "AI-Translate-Data" folder to remove all saved settings.
+      `# Luma — local data folder
+# Safe to delete this entire "Luma-Data" folder to remove all saved settings.
 # The portable app does NOT write to Windows AppData or the registry.
 # (macOS/Linux builds store settings in the system app-data folder unless you use AppImage.)
 

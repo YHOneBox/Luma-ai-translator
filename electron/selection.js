@@ -62,11 +62,47 @@ async function simulateCopy() {
   }
 }
 
+async function simulatePasteWindows() {
+  await execFileAsync('powershell.exe', [
+    '-NoProfile',
+    '-Sta',
+    '-Command',
+    [
+      '$ErrorActionPreference = "Stop"',
+      'Add-Type -AssemblyName System.Windows.Forms',
+      'Start-Sleep -Milliseconds 80',
+      '[System.Windows.Forms.SendKeys]::SendWait("^v")',
+    ].join('; '),
+  ]);
+}
+
+async function simulatePasteMac() {
+  await execFileAsync('osascript', [
+    '-e',
+    'tell application "System Events" to keystroke "v" using command down',
+  ]);
+}
+
+async function simulatePasteLinux() {
+  await execFileAsync('xdotool', ['key', '--clearmodifiers', 'ctrl+v']);
+}
+
+async function simulatePaste() {
+  if (process.platform === 'win32') {
+    await simulatePasteWindows();
+  } else if (process.platform === 'darwin') {
+    await simulatePasteMac();
+  } else {
+    await simulatePasteLinux();
+  }
+}
+
 async function hideAppWindows() {
   for (const win of BrowserWindow.getAllWindows()) {
-    if (!win.isDestroyed()) {
-      win.hide();
-    }
+    if (win.isDestroyed()) continue;
+    // Keep the replace status bar visible while work is in progress.
+    if (win.getTitle() === 'Luma Status') continue;
+    win.hide();
   }
   await sleep(200);
 }
@@ -104,4 +140,30 @@ async function getSelectedText() {
   }
 }
 
-module.exports = { getSelectedText };
+/**
+ * Paste text into the focused app (replaces the current selection when still selected).
+ * Keeps Luma windows hidden so focus stays on the source app.
+ * @param {string} text
+ */
+async function replaceSelectedText(text) {
+  const value = String(text || '');
+  if (!value) {
+    throw new Error('Nothing to paste.');
+  }
+
+  await hideAppWindows();
+  await sleep(100);
+
+  const saved = saveClipboard();
+
+  try {
+    clipboard.writeText(value);
+    await sleep(80);
+    await simulatePaste();
+    await sleep(200);
+  } finally {
+    restoreClipboard(saved);
+  }
+}
+
+module.exports = { getSelectedText, replaceSelectedText };

@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   translateScreen: () => ipcRenderer.send('translate:screen'),
   translateRegion: () => ipcRenderer.send('translate:region'),
   translateSelection: () => ipcRenderer.send('translate:selection'),
+  translateReplace: () => ipcRenderer.send('translate:replace'),
   onTranslationLoading: (callback) => {
     ipcRenderer.on('translation:loading', (_event, data) => callback(data));
   },
@@ -30,4 +31,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   updateApiKeyLabel: (payload) => ipcRenderer.invoke('apiKeys:updateLabel', payload),
   scanModels: () => ipcRenderer.invoke('models:scan'),
   recordHotkey: () => ipcRenderer.invoke('hotkey:record'),
+  getAppVersion: () => ipcRenderer.invoke('app:getVersion'),
+  onStatusMessage: (callback) => {
+    ipcRenderer.on('status:message', (_event, data) => callback(data));
+  },
 });

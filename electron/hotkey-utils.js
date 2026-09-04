@@ -88,6 +88,7 @@ function validateHotkeys(settings) {
     { name: 'Translate Screen', value: settings.hotkeyScreen },
     { name: 'Select Region', value: settings.hotkeyRegion },
     { name: 'Translate Selection', value: settings.hotkeySelection },
+    { name: 'Replace Selection', value: settings.hotkeyReplace },
   ];
 
   const active = entries.filter((e) => e.value);

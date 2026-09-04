@@ -127,7 +127,7 @@ const SCREENSHOT_SCHEMA = {
 };
 
 function resolvePhraseSystemPrompt(settings) {
-  const language = settings.targetLanguage || 'English';
+  const language = settings.targetLanguage || 'Chinese (Traditional)';
   return `You are an expert professional translator.
 
 Translate the ENTIRE source text into ${language}.
@@ -142,7 +142,7 @@ Rules:
 }
 
 function resolveScreenshotSystemPrompt(settings) {
-  const language = settings.targetLanguage || 'English';
+  const language = settings.targetLanguage || 'Chinese (Traditional)';
   return `You analyze screenshots and extract text for translation into ${language}.
 
 Step 1 — Extract the primary text block the user most likely wants translated (ignore UI chrome, watermarks, and unrelated background text when possible).
@@ -404,9 +404,73 @@ async function translateText(text, onProgress) {
   return formatWordResult(parsed, model, { sourceText: trimmed, source_text: trimmed });
 }
 
+function resolveReplaceSystemPrompt(settings) {
+  const language = settings.replaceLanguage || 'English';
+  return `You are an expert professional translator.
+
+Translate the ENTIRE source text into ${language}.
+
+Rules:
+- Translate ALL content completely. Never summarize or omit sentences.
+- Preserve meaning, tone, register, names, numbers, and formatting intent.
+- Preserve paragraph breaks, line breaks, and bullet/list structure from the source.
+- Do not add explanations, notes, or commentary outside the translation.
+- source_text must match the original input exactly.
+- translation must contain ONLY the translated text in ${language}.`;
+}
+
+async function translateForReplace(text, onProgress) {
+  const settings = loadSettings();
+  const apiKey = resolveApiKey(settings);
+  if (!apiKey) {
+    throw new Error('No Gemini API key configured. Open Settings → API Keys to add one.');
+  }
+
+  const trimmed = String(text || '').trim();
+  if (!trimmed) {
+    throw new Error('No text selected.');
+  }
+
+  const language = settings.replaceLanguage || 'English';
+  const ai = new GoogleGenAI({ apiKey });
+
+  onProgress?.(`Translating to ${language}...`);
+
+  const { parsed, model } = await generateWithFallback(
+    ai,
+    settings,
+    resolveReplaceSystemPrompt(settings),
+    [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: `Translate the following text completely into ${language}. Preserve all paragraph breaks.\n\n${trimmed}`,
+          },
+        ],
+      },
+    ],
+    PHRASE_SCHEMA,
+    onProgress,
+    PHRASE_TIMEOUT_MS
+  );
+
+  const result = formatPhraseResult(parsed, model, {
+    sourceText: trimmed,
+    source_text: parsed.source_text?.trim() || trimmed,
+  });
+
+  if (!result.translation?.trim()) {
+    throw new Error('Translation returned empty text.');
+  }
+
+  return result;
+}
+
 module.exports = {
   translateScreenshot,
   translateText,
+  translateForReplace,
   detectInputMode,
   WORD_TIMEOUT_MS,
   PHRASE_TIMEOUT_MS,

@@ -11,7 +11,7 @@ function httpGetBuffer(url, redirectCount = 0) {
       url,
       {
         headers: {
-          'User-Agent': 'AI-Translate/1.0 (Electron)',
+          'User-Agent': 'Luma/1.0 (Electron)',
           Accept: '*/*',
         },
         timeout: REQUEST_TIMEOUT_MS,
@@ -173,7 +173,9 @@ const TTS_LANG_MAP = {
   english: 'en',
   chinese: 'zh-CN',
   'traditional chinese': 'zh-TW',
+  'chinese (traditional)': 'zh-TW',
   'simplified chinese': 'zh-CN',
+  'chinese (simplified)': 'zh-CN',
   japanese: 'ja',
   korean: 'ko',
   french: 'fr',

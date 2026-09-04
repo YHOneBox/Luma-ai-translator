@@ -26,8 +26,8 @@ const {
   nativeImage,
 } = require('electron');
 const { captureScreen } = require('./capture');
-const { translateScreenshot, translateText } = require('./gemini');
-const { getSelectedText } = require('./selection');
+const { translateScreenshot, translateText, translateForReplace } = require('./gemini');
+const { getSelectedText, replaceSelectedText } = require('./selection');
 const {
   loadSettings,
   saveSettings,
@@ -55,6 +55,8 @@ let tray = null;
 let mainWindow = null;
 let popupWindow = null;
 let regionWindow = null;
+let statusWindow = null;
+let statusBarCloseTimer = null;
 let appIsQuitting = false;
 
 function getPageUrl(page) {
@@ -75,13 +77,14 @@ function createTrayIcon() {
 
 function createTray() {
   tray = new Tray(createTrayIcon());
-  tray.setToolTip('AI Translate');
+  tray.setToolTip('Luma');
 
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Open AI Translate', click: () => showMainWindow() },
+    { label: 'Open Luma', click: () => showMainWindow() },
     { type: 'separator' },
     { label: 'Translate Screen', click: () => startTranslation(null) },
     { label: 'Translate Selection', click: () => startSelectionTranslation() },
+    { label: 'Replace Selection', click: () => startReplaceSelectionTranslation() },
     { label: 'Select Region', click: () => openRegionSelector() },
     { type: 'separator' },
     {
@@ -113,7 +116,7 @@ function createMainWindow() {
     height: 720,
     minWidth: 400,
     minHeight: 560,
-    title: 'AI Translate',
+    title: 'Luma',
     icon: ICON_PATH,
     show: false,
     autoHideMenuBar: true,
@@ -251,6 +254,97 @@ async function waitForPopupReady() {
   }
 }
 
+function closeStatusBar() {
+  if (statusBarCloseTimer) {
+    clearTimeout(statusBarCloseTimer);
+    statusBarCloseTimer = null;
+  }
+  if (statusWindow && !statusWindow.isDestroyed()) {
+    statusWindow.close();
+  }
+  statusWindow = null;
+}
+
+/**
+ * @param {string} message
+ * @param {{ variant?: 'loading' | 'success' | 'error', autoCloseMs?: number }} [options]
+ */
+async function showStatusBar(message, options = {}) {
+  const variant = options.variant || 'loading';
+  const autoCloseMs = options.autoCloseMs;
+
+  if (statusBarCloseTimer) {
+    clearTimeout(statusBarCloseTimer);
+    statusBarCloseTimer = null;
+  }
+
+  const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+  const barWidth = Math.min(520, Math.max(300, display.workAreaSize.width - 48));
+  const barHeight = 52;
+  const x =
+    display.workArea.x + Math.round((display.workArea.width - barWidth) / 2);
+  const y = display.workArea.y + display.workArea.height - barHeight - 28;
+
+  if (!statusWindow || statusWindow.isDestroyed()) {
+    statusWindow = new BrowserWindow({
+      width: barWidth,
+      height: barHeight,
+      x,
+      y,
+      title: 'Luma Status',
+      frame: false,
+      transparent: true,
+      backgroundColor: '#00000000',
+      resizable: false,
+      movable: false,
+      focusable: false,
+      alwaysOnTop: true,
+      skipTaskbar: true,
+      show: false,
+      hasShadow: false,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
+    });
+
+    statusWindow.setIgnoreMouseEvents(true);
+    statusWindow.loadURL(getPageUrl('status'));
+
+    statusWindow.on('closed', () => {
+      statusWindow = null;
+      if (statusBarCloseTimer) {
+        clearTimeout(statusBarCloseTimer);
+        statusBarCloseTimer = null;
+      }
+    });
+
+    if (statusWindow.webContents.isLoading()) {
+      await new Promise((resolve) => {
+        statusWindow.webContents.once('did-finish-load', resolve);
+      });
+    }
+
+    if (!statusWindow.isDestroyed()) {
+      statusWindow.showInactive();
+    }
+  } else {
+    statusWindow.setBounds({ x, y, width: barWidth, height: barHeight });
+    statusWindow.showInactive();
+  }
+
+  if (statusWindow && !statusWindow.isDestroyed()) {
+    statusWindow.webContents.send('status:message', { message, variant });
+  }
+
+  if (typeof autoCloseMs === 'number' && autoCloseMs > 0) {
+    statusBarCloseTimer = setTimeout(() => {
+      closeStatusBar();
+    }, autoCloseMs);
+  }
+}
+
 function sendToPopup(channel, data) {
   if (popupWindow && !popupWindow.isDestroyed()) {
     popupWindow.webContents.send(channel, data);
@@ -326,6 +420,47 @@ async function startSelectionTranslation() {
   await runWithPopup(async (sendProgress) => translateText(text, sendProgress));
 }
 
+async function startReplaceSelectionTranslation() {
+  let text;
+
+  try {
+    text = await getSelectedText();
+  } catch (err) {
+    await showStatusBar(
+      err.message || 'Could not read selected text. Highlight text and try again.',
+      { variant: 'error', autoCloseMs: 4500 }
+    );
+    return;
+  }
+
+  try {
+    await showStatusBar('Replace translation in progress…', { variant: 'loading' });
+
+    const result = await translateForReplace(text, (message) => {
+      showStatusBar(message || 'Translating selection…', { variant: 'loading' });
+    });
+
+    if (!result?.translation?.trim()) {
+      throw new Error('Translation was empty, so nothing could be replaced.');
+    }
+
+    await showStatusBar('Pasting translation…', { variant: 'loading' });
+    // Close before paste so the status window never interferes with focus.
+    closeStatusBar();
+    await replaceSelectedText(result.translation);
+
+    await showStatusBar('Replace complete', {
+      variant: 'success',
+      autoCloseMs: 2500,
+    });
+  } catch (err) {
+    await showStatusBar(
+      err.message || 'Could not replace the selected text.',
+      { variant: 'error', autoCloseMs: 4500 }
+    );
+  }
+}
+
 function registerHotkeys() {
   globalShortcut.unregisterAll();
 
@@ -334,6 +469,7 @@ function registerHotkeys() {
     { accel: settings.hotkeyScreen, action: () => startTranslation(null) },
     { accel: settings.hotkeyRegion, action: () => openRegionSelector() },
     { accel: settings.hotkeySelection, action: () => startSelectionTranslation() },
+    { accel: settings.hotkeyReplace, action: () => startReplaceSelectionTranslation() },
   ];
 
   const failed = [];
@@ -353,6 +489,7 @@ function setupIpc() {
   ipcMain.on('translate:screen', () => startTranslation(null));
   ipcMain.on('translate:region', () => openRegionSelector());
   ipcMain.on('translate:selection', () => startSelectionTranslation());
+  ipcMain.on('translate:replace', () => startReplaceSelectionTranslation());
 
   ipcMain.on('popup:close', () => {
     if (popupWindow && !popupWindow.isDestroyed()) {
@@ -429,6 +566,8 @@ function setupIpc() {
   ipcMain.handle('hotkey:record', (event) =>
     recordHotkey(event.sender, registerHotkeys)
   );
+
+  ipcMain.handle('app:getVersion', () => app.getVersion());
 }
 
 const gotLock = app.requestSingleInstanceLock();
@@ -443,7 +582,7 @@ if (!gotLock) {
 
 app.whenReady().then(() => {
   if (process.platform === 'win32') {
-    app.setAppUserModelId('com.aitranslate.app');
+    app.setAppUserModelId('com.luma.app');
   }
 
   createTray();

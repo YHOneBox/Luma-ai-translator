@@ -1,6 +1,8 @@
-# AI Translate
+# Luma
 
 A desktop translation app built with **Electron + React**. It runs in the background and lets you translate text from your screen using **Google Gemini** — no separate OCR step required. Press a global hotkey, and a popup near your cursor shows results in one of two layouts: a **dictionary-style view** for single words, or a **source + translation card view** for sentences and paragraphs.
+
+**Author:** [Yi-Ho Chang](https://yhonebox.github.io/e-portfolio/)
 
 ---
 
@@ -11,6 +13,7 @@ A desktop translation app built with **Electron + React**. It runs in the backgr
   - [1. Full-Screen Translate](#1-full-screen-translate)
   - [2. Region Translate](#2-region-translate)
   - [3. Selection Translate](#3-selection-translate)
+  - [4. Replace Selection](#4-replace-selection)
 - [Result Popup](#result-popup)
   - [Word Layout (single word)](#word-layout-single-word)
   - [Phrase Layout (sentence / paragraph)](#phrase-layout-sentence--paragraph)
@@ -67,11 +70,11 @@ They communicate through **IPC** via a secure bridge in `electron/preload.js` (`
 
 ### 1. Full-Screen Translate
 
-**Hotkey:** `Ctrl+Shift+T` (customizable in Settings)
+**Hotkey:** `Alt+T` (customizable in Settings)
 
 **Step-by-step:**
 
-1. You press `Ctrl+Shift+T` (or click **Translate Screen** in the app / tray menu).
+1. You press `Alt+T` (or click **Translate Screen** in the app / tray menu).
 2. The main window hides briefly so it does not appear in the capture.
 3. A **popup window** opens near your cursor and shows *"Capturing screen…"*.
 4. The main process takes a **full-screen screenshot** via Electron's `desktopCapturer`.
@@ -81,7 +84,7 @@ They communicate through **IPC** via a secure bridge in `electron/preload.js` (`
 8. The popup updates with the full result.
 
 ```
-Ctrl+Shift+T
+Alt+T
     → hide main window
     → open popup (loading)
     → capture full screen
@@ -95,18 +98,18 @@ Ctrl+Shift+T
 
 ### 2. Region Translate
 
-**Hotkey:** `Ctrl+Shift+R` (customizable)
+**Hotkey:** `Alt+C` (customizable)
 
 **Step-by-step:**
 
-1. You press `Ctrl+Shift+R` (or click **Select Region**).
+1. You press `Alt+C` (or click **Select Region**).
 2. A **full-screen overlay** appears with a crosshair cursor.
 3. You **click and drag** to draw a rectangle around the text you want.
 4. On release, the overlay closes and the same pipeline as full-screen translate runs — but only the **selected region** is captured and sent to Gemini.
 5. Press `Esc` while dragging to cancel.
 
 ```
-Ctrl+Shift+R
+Alt+C
     → open region selector overlay
     → user draws rectangle
     → capture region only
@@ -120,12 +123,12 @@ Ctrl+Shift+R
 
 ### 3. Selection Translate
 
-**Hotkey:** `Ctrl+Shift+S` (customizable)
+**Hotkey:** `Alt+X` (customizable)
 
 **Step-by-step:**
 
 1. **Highlight text** in any app (browser, PDF, editor, etc.).
-2. Press `Ctrl+Shift+S` (or click **Translate Selection**).
+2. Press `Alt+X` (or click **Translate Selection**).
 3. The app **hides its windows**, simulates `Ctrl+C` to copy your selection, and reads the clipboard.
 4. It verifies the clipboard text actually changed (retries copy if needed).
 5. The selected text is sent to Gemini as plain text (no screenshot).
@@ -133,7 +136,7 @@ Ctrl+Shift+R
 7. The popup shows the final result in the appropriate layout.
 
 ```
-Highlight text → Ctrl+Shift+S
+Highlight text → Alt+X
     → hide app windows
     → simulate Ctrl+C, read clipboard
     → Gemini translateText(text)
@@ -143,6 +146,21 @@ Highlight text → Ctrl+Shift+S
 ```
 
 > **Tip:** Make sure text is selected before pressing the hotkey. If nothing is selected, the app shows an error in the popup.
+
+---
+
+### 4. Replace Selection
+
+**Hotkey:** `Alt+R` (customizable)
+
+**Step-by-step:**
+
+1. **Highlight text** in any app.
+2. Press `Alt+R` (or click **Replace Selection**).
+3. Luma copies the selection, translates it into the **Replace language** from Settings (default: English), and pastes the translation back over the selection.
+4. A bottom status bar shows progress, then **Replace complete** (or an error if the text could not be replaced). No result popup is shown.
+
+Set the destination language under **Settings → Basic → Replace language**.
 
 ---
 
@@ -252,11 +270,11 @@ Primary model  →  Fallback 1  →  Fallback 2  →  …
 
 | Role | Model |
 |------|-------|
-| Primary | `gemini-3.6-flash` |
-| Fallback 1 | `gemini-3.5-flash` |
-| Fallback 2 | `gemini-3.5-flash-lite` |
+| Primary | `gemini-3.5-flash-lite` |
+| Fallback 1 | `gemini-3.6-flash` |
+| Fallback 2 | `gemini-3.5-flash` |
 
-**Timeout behavior:** Each model gets **10 seconds**. If it does not respond in time, the app automatically tries the next model and updates the popup message (e.g. *"Timed out on gemini-3.6-flash, trying gemini-3.5-flash…"*).
+**Timeout behavior:** Each model gets **10 seconds**. If it does not respond in time, the app automatically tries the next model and updates the popup message (e.g. *"Timed out on gemini-3.5-flash-lite, trying gemini-3.6-flash…"*).
 
 If all models fail, the popup shows an error with details from each attempt.
 
@@ -264,13 +282,13 @@ If all models fail, the popup shows an error with details from each attempt.
 
 ## Background Mode & System Tray
 
-AI Translate is designed to stay available while you work in other apps.
+Luma is designed to stay available while you work in other apps.
 
 | Action | What happens |
 |--------|--------------|
 | **Launch app** | Main window opens; app icon appears in the taskbar and system tray |
 | **Close main window (×)** | Window hides — app **keeps running** in the tray; hotkeys still work |
-| **Tray double-click** or **Open AI Translate** | Brings the main window back |
+| **Tray double-click** or **Open Luma** | Brings the main window back |
 | **Tray → Quit** | Fully exits the app |
 
 Global hotkeys are registered at startup and re-registered whenever you save new hotkeys in Settings.
@@ -284,7 +302,8 @@ Open **Settings** from the gear icon on the main window.
 | Setting | Description |
 |---------|-------------|
 | **API Keys** | Add, remove, and switch between Gemini API keys (stored locally) |
-| **Target language** | Language Gemini translates into (default: English) |
+| **Target language** | Language Gemini translates into (default: Chinese (Traditional)) |
+| **Replace language** | Language used when replacing selected text in place (default: English) |
 | **Primary model** | First Gemini model to try |
 | **Fallback models** | Ordered list of backup models; use **Scan models** to discover available models for your API key |
 | **System prompt** | Custom instructions sent to Gemini; `{targetLanguage}` is replaced automatically |
@@ -293,12 +312,12 @@ Open **Settings** from the gear icon on the main window.
 Settings are saved to:
 
 ```
-%APPDATA%/ai-translate/settings.json   (Windows)
-~/Library/Application Support/ai-translate/settings.json   (macOS)
-~/.config/ai-translate/settings.json   (Linux)
+%APPDATA%/Luma/settings.json   (Windows)
+~/Library/Application Support/Luma/settings.json   (macOS)
+~/.config/Luma/settings.json   (Linux)
 ```
 
-**Hotkey recording:** Click **Set key** in Settings, then press your desired key combination. Press `Esc` to cancel. Each hotkey must include at least one modifier (`Ctrl`, `Alt`, or `Shift`) and must be unique across all three actions.
+**Hotkey recording:** Click **Set key** in Settings, then press your desired key combination. Press `Esc` to cancel. Each hotkey must include at least one modifier (`Ctrl`, `Alt`, or `Shift`) and must be unique across all actions.
 
 ### API Keys
 
@@ -328,9 +347,10 @@ Get a free key from [Google AI Studio](https://aistudio.google.com/apikey).
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+Shift+T` | Capture **full screen** and translate |
-| `Ctrl+Shift+R` | **Select a region** and translate |
-| `Ctrl+Shift+S` | Translate **highlighted text** (selection) |
+| `Alt+T` | Capture **full screen** and translate |
+| `Alt+C` | **Select a region** and translate |
+| `Alt+X` | Translate **highlighted text** (selection lookup) |
+| `Alt+R` | **Replace** highlighted text with a translation |
 | `Esc` | Cancel region selection |
 
 All hotkeys can be changed in **Settings**.
@@ -374,7 +394,7 @@ The app uses saved Settings keys first; `.env` is only a fallback for developers
 
 ## Download & Run (Portable)
 
-End users can run AI Translate **without installing Node.js** — download the portable build from GitHub Releases.
+End users can run Luma **without installing Node.js** — download the portable build from GitHub Releases.
 
 ### For users (after you publish a release)
 
@@ -383,9 +403,9 @@ End users can run AI Translate **without installing Node.js** — download the p
 
 | Platform | File | How to run |
 |----------|------|------------|
-| **Windows** | `AI-Translate-*-Portable.exe` | Double-click (no install) |
-| **macOS** | `AI-Translate-*-mac-*.dmg` or `.zip` | Open DMG, drag to Applications; or unzip |
-| **Linux** | `AI-Translate-*-linux-*.AppImage` or `.zip` | `chmod +x` AppImage, then run; or unzip |
+| **Windows** | `Luma-*-Portable.exe` | Double-click (no install) |
+| **macOS** | `Luma-*-mac-*.dmg` or `.zip` | Open DMG, drag to Applications; or unzip |
+| **Linux** | `Luma-*-linux-*.AppImage` or `.zip` | `chmod +x` AppImage, then run; or unzip |
 
 3. Run the app (see table above).
 4. On first launch, open **Settings → API Keys** and add your [Gemini API key](https://aistudio.google.com/apikey).
@@ -399,14 +419,14 @@ The portable app is designed to stay **self-contained** — it does **not** inst
 
 | Location | Stored? | What's in it |
 |----------|---------|--------------|
-| **`AI-Translate-Data/`** (next to the `.exe`) | Only if you change settings or save an API key | `settings.json` (hotkeys, models, API keys) |
-| **`AI-Translate-Data/cache/`** | Temporary | Cleared automatically when you quit the app |
+| **`Luma-Data/`** (next to the `.exe`) | Only if you change settings or save an API key | `settings.json` (hotkeys, models, API keys) |
+| **`Luma-Data/cache/`** | Temporary | Cleared automatically when you quit the app |
 | **Windows AppData** | No | — |
 | **Registry** | No | — |
 | **Translation history** | No | Nothing is logged locally |
 | **Network** | Yes (required) | Gemini API, pronunciation/TTS lookups only when you translate |
 
-**To remove everything:** quit the app and delete the `AI-Translate-Data` folder next to the portable `.exe`.
+**To remove everything:** quit the app and delete the `Luma-Data` folder next to the portable `.exe`.
 
 **Optional:** Place a `.env` file next to the `.exe` with `GEMINI_API_KEY=...` instead of saving keys in Settings (you manage that file yourself).
 
@@ -420,7 +440,7 @@ npm run dist:portable
 Output:
 
 ```
-release/AI-Translate-1.0.0-Portable.exe
+release/Luma-1.0.0-Portable.exe
 ```
 
 Other build commands:
@@ -466,7 +486,7 @@ Follow these steps to publish **v1.0.0** (or any first release) safely.
    - `.env` (API keys)
    - `node_modules/`, `dist/`, `release/`
 
-2. **Never commit** your Gemini API key, `.env`, or `%APPDATA%/ai-translate/settings.json`.
+2. **Never commit** your Gemini API key, `.env`, or `%APPDATA%/Luma/settings.json`.
 
 3. **Quick check** (in the project folder):
 
@@ -479,7 +499,7 @@ Make sure `.env` does not appear under "Changes to be committed".
 ### Step 1 — Create a GitHub repository
 
 1. Go to [github.com/new](https://github.com/new).
-2. Name it e.g. `AI_Translate`.
+2. Name it e.g. `Luma`.
 3. Leave it **Public** or **Private** (your choice).
 4. **Do not** initialize with a README if you already have one locally.
 5. Click **Create repository**.
@@ -491,9 +511,9 @@ In PowerShell, from your project folder:
 ```bash
 git init
 git add .
-git commit -m "Initial release: AI Translate v1.0.0"
+git commit -m "Initial release: Luma v1.0.0"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/AI_Translate.git
+git remote add origin https://github.com/YOUR_USERNAME/Luma.git
 git push -u origin main
 ```
 
@@ -502,7 +522,7 @@ Replace `YOUR_USERNAME` with your GitHub username.
 ### Step 3 — Tag the version
 
 ```bash
-git tag -a v1.0.0 -m "AI Translate v1.0.0"
+git tag -a v1.0.0 -m "Luma v1.0.0"
 git push origin v1.0.0
 ```
 
@@ -513,34 +533,35 @@ Tags mark official releases (e.g. `v1.0.0`, `v1.1.0`).
 When you push a version tag, GitHub Actions builds for **Windows, macOS, and Linux** and attaches all files to the release automatically.
 
 ```bash
-git tag -a v1.0.0 -m "AI Translate v1.0.0"
+git tag -a v1.0.0 -m "Luma v1.0.0"
 git push origin v1.0.0
 ```
 
 1. Wait for the **Build Release** workflow to finish (Actions tab — three build jobs + publish).
 2. Open **Releases** — assets should include `.exe`, `.dmg`, `.AppImage`, and `.zip` files.
-3. Or create a release manually and attach `release/AI-Translate-*-Portable.exe` from a local `npm run dist:portable` build.
+3. Or create a release manually and attach `release/Luma-*-Portable.exe` from a local `npm run dist:portable` build.
 
 **Release description** — example:
 
 ```markdown
-## AI Translate v1.0.0
+## Luma v1.0.0
 
 First public release of the desktop translation app.
 
 ### Features
-- Screen, region, and selection translation via Gemini
+- Screen, region, selection, and replace translation via Gemini
 - Dictionary-style popup for single words
 - Two-card layout for sentences and paragraphs
 - IPA + pronunciation audio
 - Customizable hotkeys and model fallbacks
 - API key management in Settings
+- In-place replace selection into a configurable language
 
 ### Install (download — recommended)
 1. Download the file for your OS from Assets below (`.exe` / `.dmg` / `.AppImage`)
 2. Run the app (see platform table in Download & Run section)
 3. Settings → API Keys → add your Gemini key
-4. Press `Ctrl+Shift+T` / `R` / `S` to translate (macOS uses `Cmd` instead of `Ctrl`)
+4. Press `Alt+T` / `C` / `X` / `R` to translate or replace
 
 ### Install (from source)
 1. Clone the repo
@@ -580,7 +601,7 @@ First public release of the desktop translation app.
 ## Project Structure
 
 ```
-AI_Translate/
+Luma/
 ├── electron/                  # Main process (Node.js)
 │   ├── main.js                # App entry: hotkeys, windows, IPC, tray
 │   ├── preload.js             # Secure IPC bridge (window.electronAPI)
@@ -657,6 +678,7 @@ AI_Translate/
 | `translate:screen` | Trigger full-screen translate |
 | `translate:region` | Open region selector |
 | `translate:selection` | Trigger selection translate |
+| `translate:replace` | Translate selection and paste it back in place |
 | `popup:close` | Close result popup |
 | `settings:save` | Save settings and re-register hotkeys |
 | `hotkey:record` | Record a new hotkey in Settings |
@@ -709,7 +731,7 @@ https://dictionary.cambridge.org/dictionary/english/{base_word}
 
 - **Node.js** 18+
 - **Windows**, macOS, or Linux
-- A **Gemini API key** with access to flash models (e.g. `gemini-3.6-flash`)
+- A **Gemini API key** with access to flash models (e.g. `gemini-3.5-flash-lite`)
 
 ---
 
@@ -724,7 +746,7 @@ https://dictionary.cambridge.org/dictionary/english/{base_word}
 | **No IPA or pronunciation** | Only on **word layout** for English headwords; phrase layout uses TTS instead |
 | **Wrong popup layout** | One word → word layout; multiple words → phrase layout; depends on `source_text` / selection |
 | **Phrase audio missing** | TTS is limited to 480 chars; very long text may not produce audio |
-| **Where is my data stored?** | Portable builds: `AI-Translate-Data/` next to the `.exe` only — delete that folder to wipe all local data |
+| **Where is my data stored?** | Portable builds: `Luma-Data/` next to the `.exe` only — delete that folder to wipe all local data |
 | **Blank screenshot** | Grant screen recording permission (macOS: System Settings → Privacy → Screen Recording) |
 | **Model scan shows no models** | Check your API key; click **Scan models** again in Settings |
 

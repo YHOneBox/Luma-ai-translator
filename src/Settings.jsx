@@ -12,6 +12,7 @@ export default function Settings({ onBack }) {
   const [newKeyLabel, setNewKeyLabel] = useState('');
   const [newKeyValue, setNewKeyValue] = useState('');
   const [addingKey, setAddingKey] = useState(false);
+  const [showAddKeyForm, setShowAddKeyForm] = useState(false);
 
   const load = useCallback(async () => {
     const api = window.electronAPI;
@@ -135,6 +136,7 @@ export default function Settings({ onBack }) {
       hotkeyScreen: defaults.hotkeyScreen,
       hotkeyRegion: defaults.hotkeyRegion,
       hotkeySelection: defaults.hotkeySelection,
+      hotkeyReplace: defaults.hotkeyReplace,
     };
 
     try {
@@ -162,12 +164,19 @@ export default function Settings({ onBack }) {
       setSettings(saved);
       setNewKeyLabel('');
       setNewKeyValue('');
+      setShowAddKeyForm(false);
       setStatus('API key added.');
     } catch (err) {
       setStatus(err.message || 'Failed to add API key.');
     } finally {
       setAddingKey(false);
     }
+  };
+
+  const cancelAddApiKey = () => {
+    setShowAddKeyForm(false);
+    setNewKeyLabel('');
+    setNewKeyValue('');
   };
 
   const activateApiKey = async (id) => {
@@ -275,35 +284,56 @@ export default function Settings({ onBack }) {
             <p className="settings-note">No saved API keys yet.</p>
           )}
 
-          <div className="api-key-add">
-            <label className="field">
-              <span>Label (optional)</span>
-              <input
-                type="text"
-                value={newKeyLabel}
-                onChange={(e) => setNewKeyLabel(e.target.value)}
-                placeholder="Personal / Work"
-              />
-            </label>
-            <label className="field">
-              <span>Gemini API key</span>
-              <input
-                type="password"
-                value={newKeyValue}
-                onChange={(e) => setNewKeyValue(e.target.value)}
-                placeholder="AIza..."
-                autoComplete="off"
-              />
-            </label>
+          {showAddKeyForm ? (
+            <div className="api-key-add">
+              <label className="field">
+                <span>Label (optional)</span>
+                <input
+                  type="text"
+                  value={newKeyLabel}
+                  onChange={(e) => setNewKeyLabel(e.target.value)}
+                  placeholder="Personal / Work"
+                  autoFocus
+                />
+              </label>
+              <label className="field">
+                <span>Gemini API key</span>
+                <input
+                  type="password"
+                  value={newKeyValue}
+                  onChange={(e) => setNewKeyValue(e.target.value)}
+                  placeholder="AIza..."
+                  autoComplete="off"
+                />
+              </label>
+              <div className="api-key-add-actions">
+                <button
+                  type="button"
+                  className="btn-secondary small"
+                  onClick={cancelAddApiKey}
+                  disabled={addingKey}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn-primary small"
+                  onClick={addApiKey}
+                  disabled={addingKey}
+                >
+                  {addingKey ? 'Adding...' : 'Save key'}
+                </button>
+              </div>
+            </div>
+          ) : (
             <button
               type="button"
               className="btn-secondary small"
-              onClick={addApiKey}
-              disabled={addingKey}
+              onClick={() => setShowAddKeyForm(true)}
             >
-              {addingKey ? 'Adding...' : 'Add API Key'}
+              + Add API Key
             </button>
-          </div>
+          )}
         </section>
 
         <section className="settings-section">
@@ -315,9 +345,24 @@ export default function Settings({ onBack }) {
               type="text"
               value={settings.targetLanguage}
               onChange={(e) => updateField('targetLanguage', e.target.value)}
+              placeholder="Chinese (Traditional)"
+            />
+            <small>
+              Language for screen / selection lookup results via {'{targetLanguage}'}.
+            </small>
+          </label>
+
+          <label className="field">
+            <span>Replace language</span>
+            <input
+              type="text"
+              value={settings.replaceLanguage || ''}
+              onChange={(e) => updateField('replaceLanguage', e.target.value)}
               placeholder="English"
             />
-            <small>Used in the system prompt via {'{targetLanguage}'}.</small>
+            <small>
+              Language used when replacing selected text in place (Replace Selection hotkey).
+            </small>
           </label>
         </section>
 
@@ -356,6 +401,13 @@ export default function Settings({ onBack }) {
             defaultValue={defaults?.hotkeySelection}
             onChange={(v) => saveHotkey('hotkeySelection', v)}
             onReset={() => resetHotkey('hotkeySelection', defaults?.hotkeySelection)}
+          />
+          <HotkeyInput
+            label="Replace selection"
+            value={settings.hotkeyReplace}
+            defaultValue={defaults?.hotkeyReplace}
+            onChange={(v) => saveHotkey('hotkeyReplace', v)}
+            onReset={() => resetHotkey('hotkeyReplace', defaults?.hotkeyReplace)}
           />
         </section>
 

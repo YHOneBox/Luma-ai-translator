@@ -19,16 +19,27 @@ Return structured JSON with:
 - base_word: the primary English dictionary headword (lowercase, single word or short phrase suitable for Cambridge Dictionary lookup)`;
 
 const DEFAULT_SETTINGS = {
-  primaryModel: 'gemini-3.6-flash',
-  fallbackModels: ['gemini-3.5-flash', 'gemini-3.5-flash-lite'],
+  primaryModel: 'gemini-3.5-flash-lite',
+  fallbackModels: ['gemini-3.6-flash', 'gemini-3.5-flash'],
   systemPrompt: DEFAULT_SYSTEM_PROMPT,
-  targetLanguage: 'English',
-  hotkeyScreen: 'CommandOrControl+Shift+T',
-  hotkeyRegion: 'CommandOrControl+Shift+R',
-  hotkeySelection: 'CommandOrControl+Shift+S',
+  targetLanguage: 'Chinese (Traditional)',
+  replaceLanguage: 'English',
+  hotkeyScreen: 'Alt+T',
+  hotkeyRegion: 'Alt+C',
+  hotkeySelection: 'Alt+X',
+  hotkeyReplace: 'Alt+R',
   apiKeys: [],
   activeApiKeyId: null,
 };
+
+/** Previous defaults — upgrade silent installs that never customized hotkeys. */
+const LEGACY_DEFAULT_HOTKEYS = {
+  hotkeyScreen: 'CommandOrControl+Shift+T',
+  hotkeyRegion: 'CommandOrControl+Shift+R',
+  hotkeySelection: 'CommandOrControl+Shift+S',
+};
+
+const LEGACY_DEFAULT_PRIMARY_MODELS = new Set(['gemini-3.6-flash']);
 
 const DEPRECATED_MODELS = new Set([
   'gemini-2.5-flash',
@@ -45,21 +56,53 @@ function migrateSettings(settings) {
   if (DEPRECATED_MODELS.has(migrated.primaryModel)) {
     migrated.primaryModel = DEFAULT_SETTINGS.primaryModel;
     changed = true;
-  }
-
-  const filteredFallbacks = (migrated.fallbackModels || []).filter(
-    (id) => !DEPRECATED_MODELS.has(id)
-  );
-  if (filteredFallbacks.length !== (migrated.fallbackModels || []).length) {
-    migrated.fallbackModels = filteredFallbacks;
+  } else if (LEGACY_DEFAULT_PRIMARY_MODELS.has(migrated.primaryModel)) {
+    // Upgrade installs that still use the previous built-in primary default.
+    migrated.primaryModel = DEFAULT_SETTINGS.primaryModel;
+    migrated.fallbackModels = [...DEFAULT_SETTINGS.fallbackModels];
     changed = true;
   }
 
-  for (const key of ['hotkeyScreen', 'hotkeyRegion', 'hotkeySelection']) {
+  const filteredFallbacks = (migrated.fallbackModels || []).filter(
+    (id) => !DEPRECATED_MODELS.has(id) && id !== migrated.primaryModel
+  );
+  if (filteredFallbacks.length !== (migrated.fallbackModels || []).length) {
+    migrated.fallbackModels =
+      filteredFallbacks.length > 0
+        ? filteredFallbacks
+        : [...DEFAULT_SETTINGS.fallbackModels];
+    changed = true;
+  }
+
+  for (const key of [
+    'hotkeyScreen',
+    'hotkeyRegion',
+    'hotkeySelection',
+    'hotkeyReplace',
+  ]) {
     if (!migrated[key]) {
       migrated[key] = DEFAULT_SETTINGS[key];
       changed = true;
+    } else if (
+      LEGACY_DEFAULT_HOTKEYS[key] &&
+      migrated[key] === LEGACY_DEFAULT_HOTKEYS[key]
+    ) {
+      migrated[key] = DEFAULT_SETTINGS[key];
+      changed = true;
     }
+  }
+
+  if (!migrated.replaceLanguage) {
+    migrated.replaceLanguage = DEFAULT_SETTINGS.replaceLanguage;
+    changed = true;
+  } else if (migrated.replaceLanguage === 'Chinese') {
+    migrated.replaceLanguage = DEFAULT_SETTINGS.replaceLanguage;
+    changed = true;
+  }
+
+  if (migrated.targetLanguage === 'English') {
+    migrated.targetLanguage = DEFAULT_SETTINGS.targetLanguage;
+    changed = true;
   }
 
   if (!Array.isArray(migrated.apiKeys)) {
